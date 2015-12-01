@@ -28,8 +28,9 @@ textblock
 
 //wŒ`
 	ifb chkimg("wŒ`‘I‘ğ")
-		Sortie(formation)
-
+		formation = 1
+		Sortieformation(formation)
+	endif
 //—£’E”»’è
 
 	ifb chkimg("—£’E”»’è.bmp")

@@ -84,9 +84,9 @@ endtextblock
 	
 	//êwå`
 		//ëÊàÍêwå`
-	procedure Sortieformation()
-	x=1
-		SELECT x
+	procedure Sortieformation(formation)
+
+		SELECT formation
 		case 1
 			KBD(VK_1,CLICK,100)
 		case 2
