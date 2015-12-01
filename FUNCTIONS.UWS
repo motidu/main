@@ -1,0 +1,197 @@
+//FUNCTIONS.UWS
+
+textblock
+・PROCEDURE 戻り値なし
+PROCEDURE 関数名( 引数,　Var 引数,　引数[],　Var 引数[][],　引数=定数, …. )
+　　　　処理
+FEND
+
+
+・FUNCTION 戻り値RESULTのある自作関数を定義
+FUNCTION 関数名( 引数,　Var 引数,　引数[],　Var 引数[][],　引数=定数, …. )
+　　　　処理
+　　　　RESULT = 戻り値 　　　//　Result に戻り値を入れる
+FEND
+
+Var 宣言を付けると引数を変更可能とする(参照引数)
+配列変数には次元数分 []を付ける　(２次元配列の場合 引数[][] )
+= 定数 にてデフォルトパラメータを指定できる
+（デフォルトパラメータ以降に通常引数を書く事はNG）
+
+endtextblock
+
+
+
+
+
+
+
+//出撃 Sortie
+	//R連打
+	PROCEDURE RR()
+		FUKIDASI("ボスでない　週目",1800,0)
+		ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
+		,1119,3,800,893,0)
+		KBD(VK_r,CLICK,100) //出撃中はR連打
+		m=3
+		sleep(m)
+	fend
+	//ボス戦、夜戦まで
+	PROCEDURE Sortieboss()
+
+			FUKIDASI("Boss",1120,0)
+			Sleep(1)
+			ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
+			,1119,3,800,911,0)
+			sleep(0.5)
+			KBD(vk_ctrl,down,100)
+			KBD(vk_return,down,100)
+			KBD(vk_return,up)
+			KBD(vk_ctrl,up)
+	FEND		
+	//戦果報告→母港へ帰還
+	PROCEDURE Sortiereport()
+			ifb chkimg("戦果報告.bmp")
+				ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
+				,1119,3,800,911,0)
+				ifb chkimg("BossB.bmp")
+					call "母港へ戻る.uws"
+				endif
+				
+				fukidasi("戦果報告",1800,0)
+			endif
+		
+	FEND
+	//戦果報告
+	//ボス戦、夜戦まで
+	
+	//大破
+	PROCEDURE Sortiebreak()
+	FUKIDASI("大破",1120,0)
+			sleep(1)
+			ACW(GETID("大破進撃警告","#32770"),1374,308,290,165,0)
+		BTN(LEFT,CLICK,1488,369,0)
+		BTN(LEFT,CLICK,1462,361,0)
+		BTN(LEFT,CLICK,1444,385,0)
+		BTN(LEFT,CLICK,1446,445,0)
+		BTN(LEFT,CLICK,1446,445,0)
+		BTN(LEFT,CLICK,1446,445,0)
+		sleep(5)
+		
+		FUKIDASI("break",1800,0)
+	fend
+	//大破
+	
+	//陣形
+		//第一陣形
+	procedure Sortieformation()
+	x=1
+		SELECT x
+		case 1
+			KBD(VK_1,CLICK,100)
+		case 2
+			KBD(VK_2,CLICK,100)
+		case 3
+			KBD(VK_3,CLICK,100)
+		case 4
+			KBD(VK_4,CLICK,100)
+		case 5
+			KBD(VK_5,CLICK,100)
+		selend
+	fend
+	//陣形
+	
+//出撃
+
+
+
+
+//母港へ BackHomePort--------------------------------------------------------------------------------
+PROCEDURE BHP()
+
+WHILE (chkimg("出撃T.bmp")=false)
+sleep(0.1)
+		ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe"),1119,3,800,911,0)
+		KBD(VK_back,CLICK,0)
+
+BTN(LEFT,CLICK,1151,483,0)
+
+wend
+	
+FEND
+//母港へ--------------------------------------------------------------------------------
+//補給
+	//補給1
+	PROCEDURE Supplyone()
+		FUKIDASI("補給",1120,0)
+		ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
+			,1119,3,800,893,0)
+		KBD(VK_o,CLICK,100)
+		while chkimg("出撃T.bmp",0)=false
+			sleep(0.5)
+			KBD(VK_p,CLICK,100)
+		wend
+		fukidasi("補給しました",1120,0)
+	fend
+	//補給234
+	PROCEDURE Supplythree()
+		FUKIDASI("補給",1120,0)
+		ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
+			,1119,3,800,893,0)
+		KBD(VK_j,CLICK,100)
+		while chkimg("出撃T.bmp",0)=false
+			sleep(0.5)
+			KBD(VK_p,CLICK,100)
+		wend
+		fukidasi("補給しました",1120,0)
+	fend
+	
+//補給
+//入渠
+PROCEDURE dock()
+FUKIDASI("修理",1800,0)
+	ifb chkimg("出撃T.bmp",0)
+		ifb chkimg("入渠未使用.bmp",0)
+ 			call "大破入渠new.uws"
+		endif
+	endif
+	fukidasi("修理2",1800,0)
+	sleep(1)
+fend
+//入渠
+//母港MAX
+PROCEDURE MAX()
+	FUKIDASI("解体",1800,0)
+	sleep(1)
+	call "解体キラ付け.uws"
+fend
+//母港MAX
+//出撃
+PROCEDURE GoSortie23()
+			ifb chkimg("第一艦隊出撃可能.bmp",0) //第一艦隊出撃可能.bmp　があるなら
+
+				ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
+				,1119,3,800,893,0)
+				KBD(vk_y,CLICK,0)//キーボード return
+				fukidasi("y",1800,0)
+				sleep(2)
+				call "出撃前.uws"
+				fukidasi("出撃前",1800,0)
+				CALL "オリョクル.UWS"
+				
+
+				FUKIDASI("オリョクル 週目",1800,0)
+
+				sleep(5)
+			endif
+
+fend
+//出撃
+//オリョクル編成
+
+PROCEDURE change23()
+call "オリョクル変更"
+fend
+
+//オリョクル編成
+
