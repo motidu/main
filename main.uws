@@ -22,21 +22,34 @@ WHILE !GETKEYSTATE(VK_ESC)
 
 
 ifb stHASH["sortie"]="戦闘"
+
+//陣形
+	ifb chkimg("羅針盤.bmp")
+		RR()
+	elseif chkimg("陣形選択.bmp")
+		ifb chkimg("map1-5.bmp")
+					formation = 5
+		else
+			formation = 1
+		endif
+			Sortieformation(formation)
+
+	elseif chkimg("戦果報告.bmp")
+		RR()
+	elseif chkimg("獲得画面.bmp")
+		RR()
+	elseif chkimg("進撃選択.bmp")
+		RR()
+
+	
 textblock
 //戦闘中の処理　関数　戦闘
 //map
 
-//陣形
-	ifb chkimg("陣形選択")
-		formation = 1
-		Sortieformation(formation)
-	endif
+
 //離脱判定
 
-	ifb chkimg("離脱判定.bmp")
-		ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
-		,1119,3,800,893,0)
-		KBD(VK_r,click,0)
+
 //bossで夜戦する
 			WHILE chkimg("BossB.bmp")
 				Sortie(boss)
@@ -48,9 +61,9 @@ textblock
 	endif
 endtextblock	
 //大破
-	RR()
+//	RR()
 	
-	ifb chkimg("大破B.bmp",0)
+	elseif chkimg("大破B.bmp",0)
 		Sortiebreak()
 	endif
 
@@ -60,7 +73,6 @@ elseif stHASH["sortie"]="母港"
 	ifb stHASH["expedition"] = "遠征帰還"
 		//遠征帰還の処理
 		call "遠征帰還.uws"
-		sleep(1)
 	elseif stHASH["expedition"] = "無遠征状態"
 		//遠征開始の処理
 		CALL "遠征マクロ3.UWS"
@@ -74,8 +86,6 @@ elseif stHASH["sortie"]="母港"
 		fukidasi("大破入渠",1800,0)
  
 			dock()
-		sleep(1)
-
 		//オリョクル変更
 		elseif stHASH["1艦目"] = "入渠中" or stHASH["2艦目"] = "入渠中"
 		fukidasi("オリョクル変更1",1800,0)
@@ -92,20 +102,21 @@ change23()
 		fukidasi("補給",1800,0)
 
 			Supplyone()
-		sleep(1)
 		//解体
 		elseif stHASH["MAX"] = "MAX"
 		fukidasi("解体",1800,0)
 
 			MAX()
-		sleep(1)
 		else
 		//出撃
 		fukidasi("出撃",1800,0)
 		GoSortie23()
-		sleep(1)
 		endif
+		sleep(1)
+
+		
 	endif
+		sleep(1)
 	
 
 
