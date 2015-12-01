@@ -96,6 +96,9 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 
 	elseif stHASH["sortie"]="母港"
 	//母港の処理
+	ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+	,1119,3,800,893,0)
+	gomap = 0
 		//遠征
 		ifb stHASH["expedition"] = "遠征帰還"
 			//遠征帰還の処理
@@ -111,11 +114,12 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 			//大破入渠
 			ifb stHASH["1艦目"] = "大破" or stHASH["2艦目"] = "大破"
 			fukidasi("大破入渠",1800,0)
-	 
+	 		sleep(0.5)
 				dock()
 			//オリョクル変更
 			ifb mapno=23
 				change23()
+			BHP()
 			endif
 textblock
 			elseif stHASH["1艦目"] = "入渠中" or stHASH["2艦目"] = "入渠中"
@@ -142,10 +146,12 @@ endtextblock
 			else
 			//出撃
 			fukidasi("出撃",1800,0)
-				ifb Rept = 1
+				ifb Rept = 1 and gomap = 1
+				
 					break
 				else
 					GoSortiemap(mapno)
+					gomap = 1
 				endif
 			endif
 			
