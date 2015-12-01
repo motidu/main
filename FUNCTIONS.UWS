@@ -31,7 +31,7 @@ endtextblock
 	PROCEDURE RR()
 		FUKIDASI("ボスでない　週目",1800,0)
 		ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
-		,1119,3,800,893,0)
+		,1119,-35,800,900,0)
 		KBD(VK_r,CLICK,100) //出撃中はR連打
 		m=3
 		sleep(m)
@@ -42,7 +42,7 @@ endtextblock
 			FUKIDASI("Boss",1120,0)
 			Sleep(1)
 			ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
-			,1119,3,800,911,0)
+			,1119,-35,800,900,0)
 			sleep(0.5)
 			KBD(vk_ctrl,down,100)
 			KBD(vk_return,down,100)
@@ -53,7 +53,7 @@ endtextblock
 	PROCEDURE Sortiereport()
 			ifb chkimg("戦果報告.bmp")
 				ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
-				,1119,3,800,911,0)
+				,1119,-35,800,900,0)
 				ifb chkimg("BossB.bmp")
 					call "母港へ戻る.uws"
 				endif
@@ -85,7 +85,8 @@ endtextblock
 	//陣形
 		//第一陣形
 	procedure Sortieformation(formation)
-
+		ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe")_
+		,1119,-35,800,900,0)
 		SELECT formation
 		case 1
 			KBD(VK_1,CLICK,100)

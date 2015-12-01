@@ -26,14 +26,15 @@ ifb stHASH["sortie"]="í“¬"
 //wŒ`
 	ifb chkimg("—…j”Õ.bmp")
 		RR()
-	elseif chkimg("wŒ`‘I‘ğ.bmp")
+	elseif chkimg("wŒ`‘I‘ğ.bmp") and chkimg("mapŠm”F.bmp")
 		ifb chkimg("map1-5.bmp")
 					formation = 5
 		else
 			formation = 1
 		endif
 			Sortieformation(formation)
-
+	elseif chkimg("—£’E”»’è.bmp")
+		RR()	
 	elseif chkimg("í‰Ê•ñ.bmp")
 		RR()
 	elseif chkimg("Šl“¾‰æ–Ê.bmp")
@@ -283,7 +284,7 @@ PROCEDURE State()
 
 		fukidasi(+ stHASH["sortie"] + "," + stHASH["expedition"] + "," + stHASH["map"] +"   1: "+ stHASH["1ŠÍ–Ú"] + "  " + stHASH["1ŠÍ–Úcnd"] + "   2: " + stHASH["2ŠÍ–Ú"] + "  " + stHASH["2ŠÍ–Úcnd"] +,1120,0)
 
-sleep(1)
+sleep(5)
 	wend
 
 FEND
