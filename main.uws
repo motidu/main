@@ -5,15 +5,23 @@ HASHTBL StHASH = HASH_CASECARE
 INIFILE="C:\1\2-3.INI"
 THREAD State()
 
-sleep(2)
+sleep(1)
 //リピート機能のための配列変数"map""Rept"　whileの外に置く
 //リピート機能のための配列変数　whileの外に置く
 map = 0
 ct = 0
 Rept = 0
 mapno = 0
+stHASH["gomap"] = 0
+ifb GETKEYSTATE(VK_a)
+	stHASH["gomap"] = 1
+	WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
+msgbox("1週のみにします")
+endif
+
 stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//出撃状態
 ifb stHASH["sortie"]="戦闘"
+	stHASH["gomap"] = READINI("count","ini-gomap",INIFILE)//出撃1回のみ
 	stHASH["selctmap"] = READINI("count","ini-selctmap",INIFILE)//map状態
 	stHASH["Rept"] = READINI("count","ini-Rept",INIFILE)//出撃状態
 
@@ -58,7 +66,7 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 		elseif chkimg("戦果報告.bmp")
 			RR()
 			
-		elseif chkimg("獲得画面.bmp") or chkimg("獲得画面2.bmp") or chkimg("獲得画面3.bmp")
+		elseif chkimg("獲得画面.bmp") or chkimg("獲得画面2.bmp") or chkimg("獲得画面3.bmp") or chkimg("獲得画面4.bmp")
 			RR()
 		elseif chkimg("進撃選択.bmp")
 			RR()
@@ -98,7 +106,6 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 	//母港の処理
 	ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 	,1119,3,800,893,0)
-	gomap = 0
 		//遠征
 		ifb stHASH["expedition"] = "遠征帰還"
 			//遠征帰還の処理
@@ -145,13 +152,14 @@ endtextblock
 				MAX()
 			else
 			//出撃
-			fukidasi("出撃",1800,0)
-				ifb Rept = 1 and gomap = 1
-				
-					break
+				fukidasi("出撃",1800,0)
+				ifb Rept = 1 and stHASH["gomap"] = 1
+				sleep(30)
+					CONTINUE 1
 				else
 					GoSortiemap(mapno)
-					gomap = 1
+					stHASH["gomap"] = 1
+					WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
 				endif
 			endif
 			

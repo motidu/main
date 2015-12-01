@@ -131,6 +131,7 @@ FEND
 			KBD(VK_p,CLICK,100)
 		wend
 		fukidasi("•â‹‹‚µ‚Ü‚µ‚½",1120,0)
+		sleep(1)
 	fend
 	//•â‹‹234
 	PROCEDURE Supplythree()
