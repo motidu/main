@@ -128,10 +128,9 @@ FEND
 		KBD(VK_o,CLICK,100)
 		while chkimg("èoåÇT.bmp",0)=false
 			sleep(0.5)
-			KBD(VK_p,CLICK,100)
 		wend
 		fukidasi("ï‚ããÇµÇ‹ÇµÇΩ",1120,0)
-		sleep(1)
+		sleep(5)
 	fend
 	//ï‚ãã234
 	PROCEDURE Supplythree()
