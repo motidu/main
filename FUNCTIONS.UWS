@@ -200,7 +200,7 @@ result = b
 fend
 //出撃
 //出撃
-PROCEDURE GoSortiemap(b)
+PROCEDURE GoSortiemap(GSM)
 
 		ifb chkimg("第一艦隊出撃可能.bmp",0) //第一艦隊出撃可能.bmp　があるなら
 			ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
@@ -210,7 +210,7 @@ PROCEDURE GoSortiemap(b)
 			sleep(2)
 			call "出撃前.uws"
 			fukidasi("出撃前",1800,0)
-			SELECT b
+			SELECT GSM
 				CASE 11
 				CASE 23
 					CALL "オリョクル.UWS"
@@ -268,6 +268,20 @@ PROCEDURE GoSortie15()
 				sleep(5)
 			endif
 
+
+fend
+procedure gosortiemain()
+ifb chkimg("実戦.bmp",0) //画像があれば出撃海域選択へ
+	ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+	,1119,3,800,893,0)
+	KBD(vk_y,CLICK,0)//キーボード return
+elseif chkimg("出撃海域選択.bmp",0)
+		KBD(vk_e,CLICK,0)//キーボード　e
+		sleep(0.4)
+
+
+
+endif
 fend
 //出撃
 //オリョクル編成

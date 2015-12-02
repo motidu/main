@@ -20,12 +20,14 @@ msgbox("1èTÇÃÇ›Ç…ÇµÇ‹Ç∑")
 endif
 
 stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//èoåÇèÛë‘
+
 ifb stHASH["sortie"]="êÌì¨"
+
 	stHASH["gomap"] = READINI("count","ini-gomap",INIFILE)//èoåÇ1âÒÇÃÇ›
 	stHASH["selctmap"] = READINI("count","ini-selctmap",INIFILE)//mapèÛë‘
 	stHASH["Rept"] = READINI("count","ini-Rept",INIFILE)//èoåÇèÛë‘
 
-	mapno = stHASH["selctmap"]
+//	mapno = stHASH["selctmap"]
 	Rept = stHASH["Rept"]
 else
 	mapno = ReptMap(map)
@@ -157,7 +159,8 @@ endtextblock
 				sleep(30)
 					CONTINUE 1
 				else
-					GoSortiemap(mapno)
+				GSM = stHASH["selctmap"]
+					GoSortiemap(GSM)
 					stHASH["gomap"] = 1
 					WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
 				endif
