@@ -10,9 +10,8 @@ sleep(1)
 //リピート機能のための配列変数　whileの外に置く
 map = 0
 ct = 0
-Rept = 0
-mapno = 0
 stHASH["gomap"] = 0
+
 ifb GETKEYSTATE(VK_a)
 	stHASH["gomap"] = 1
 	WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
@@ -24,17 +23,16 @@ stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//出撃状態
 ifb stHASH["sortie"]="戦闘"
 
 	stHASH["gomap"] = READINI("count","ini-gomap",INIFILE)//出撃1回のみ
-	stHASH["selctmap"] = READINI("count","ini-selctmap",INIFILE)//map状態
+	stHASH["MapNo"] = READINI("count","ini-MapNo",INIFILE)//map状態
 	stHASH["Rept"] = READINI("count","ini-Rept",INIFILE)//出撃状態
 
-//	mapno = stHASH["selctmap"]
-	Rept = stHASH["Rept"]
+
 else
-	mapno = ReptMap(map)
-		stHASH["selctmap"] = mapno
-		WRITEINI("count","ini-selctmap",stHASH["selctmap"],INIFILE)
+//行き先、繰り返す回数を聞いて配列変数に代入
+		stHASH["MapNo"] = MapNo(map)
+		WRITEINI("count","ini-MapNo",stHASH["MapNo"],INIFILE)
 		
-		Rept = Reptcount(ct)
+		stHASH["Rept"] = Reptcount(ct)
 		WRITEINI("count","ini-Rept",stHASH["Rept"],INIFILE)
 
 endif
@@ -57,6 +55,7 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 		ifb chkimg("羅針盤.bmp")
 			RR()
 		elseif chkimg("陣形選択.bmp") and chkimg("map確認.bmp")
+//			procedure Setformation(stHASH)
 			ifb chkimg("map1-5.bmp")
 						formation = 5
 			else
@@ -105,7 +104,7 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 		endif
 
 	elseif stHASH["sortie"]="母港"
-	//母港の処理
+	//母港の処理------------------------------------------------------------------------
 	ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 	,1119,3,800,893,0)
 		//遠征
@@ -117,19 +116,21 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 			CALL "遠征マクロ3.UWS"
 			
 		//遠征
+
+		
 		//母港諸操作
-		else
+		else//------------------------------------------------------------
 		
 			//大破入渠
-			ifb stHASH["1艦目"] = "大破" or stHASH["2艦目"] = "大破"
+			ifb chkimg("入渠未使用.bmp",0) and stHASH["1艦目"] = "大破" or stHASH["2艦目"] = "大破"
 			fukidasi("大破入渠",1800,0)
 	 		sleep(0.5)
 				dock()
 			//オリョクル変更
-			ifb mapno=23
+			elseif stHASH["MapNo"]=23 and stHASH["1艦目"] = "大破" or stHASH["2艦目"] = "大破" or stHASH["1艦目"] = "入渠中" or stHASH["2艦目"] = "入渠中"
+			print stHASH["MapNo"]
 				change23()
 			BHP()
-			endif
 textblock
 			elseif stHASH["1艦目"] = "入渠中" or stHASH["2艦目"] = "入渠中"
 			fukidasi("オリョクル変更1",1800,0)
@@ -155,12 +156,11 @@ endtextblock
 			else
 			//出撃
 				fukidasi("出撃",1800,0)
-				ifb Rept = 1 and stHASH["gomap"] = 1
+				ifb stHASH["Rept"] = 1 and stHASH["gomap"] = 1
 				sleep(30)
 					CONTINUE 1
 				else
-				GSM = stHASH["selctmap"]
-					GoSortiemap(GSM)
+					GoSortiemap(stHASH)
 					stHASH["gomap"] = 1
 					WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
 				endif
@@ -204,6 +204,8 @@ PROCEDURE State()
 		stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//出撃状態
 		stHASH["map"] = READINI("count","ini-map",INIFILE)//map状態
 		stHASH["expedition"] = READINI("count","ini-expedition",INIFILE)//遠征状態
+		stHASH["home"] = READINI("count","ini-home",INIFILE)//遠征状態
+		stHASH["go"] = READINI("count","ini-go",INIFILE)//遠征状態
 		stHASH["supply"] = READINI("count","ini-supply",INIFILE)//補給状態
 		stHASH["dock"] = READINI("count","ini-dock",INIFILE)//補給状態
 		stHASH["MAX"] = READINI("count","ini-MAX",INIFILE)//補給状態
@@ -241,7 +243,29 @@ PROCEDURE State()
 		WRITEINI("count","ini-expedition",stHASH["expedition"],INIFILE)
 
 //遠征判定
+//母港判定
+		ifb chkimg("home.bmp")
+		stHASH["home"] = "OK"
+		WRITEINI("count","ini-home",stHASH["home"],INIFILE)
+		else
+		stHASH["home"] = "NO"
+		WRITEINI("count","ini-home",stHASH["home"],INIFILE)
+		endif
+//母港判定
+
+
 //艦隊判定
+
+	//出撃判定
+			ifb chkimg("第一艦隊出撃可能.bmp")
+		stHASH["go"] = "OK"
+		WRITEINI("count","ini-home",stHASH["go"],INIFILE)
+		else
+		stHASH["go"] = "NO"
+		WRITEINI("count","ini-go",stHASH["go"],INIFILE)
+		endif
+
+	//出撃判定
 	//入渠判定
 	ifb chkimg("大破_.bmp",0)
 		stHASH["dock"] = "大破"
@@ -342,7 +366,7 @@ PROCEDURE State()
 
 		fukidasi(+ stHASH["sortie"] + "," + stHASH["expedition"] + "," + stHASH["map"] +"   1: "+ stHASH["1艦目"] + "  " + stHASH["1艦目cnd"] + "   2: " + stHASH["2艦目"] + "  " + stHASH["2艦目cnd"] +,1120,0)
 
-sleep(5)
+sleep(3)
 	wend
 
 FEND
