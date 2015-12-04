@@ -1,69 +1,128 @@
 //メイン処理
 //THREADで並列処理をして状態も取得する
+
+//繰り返さない処理、初期設定
 call "FUNCTIONS.UWS"
 HASHTBL StHASH = HASH_CASECARE
 INIFILE="C:\1\2-3.INI"
 THREAD State()
 
-sleep(1)
-//リピート機能のための配列変数"map""Rept"　whileの外に置く
-//リピート機能のための配列変数　whileの外に置く
+
+
+sleep(1)//THREAD State()で取得するまでの待ち時間　１～２ぐらい
+
+
+
+//初期値
 map = 0
 ct = 0
+mapEX = 0
 stHASH["gomap"] = 0
 
-ifb GETKEYSTATE(VK_a)
+stHASH["expedition34"] = "OFF"
+WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
+stHASH["編成した"] = 0
+WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
+
+
+
+//aを押した場合のみ設定できる
+ifb GETKEYSTATE(VK_r)
 	stHASH["gomap"] = 1
 	WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
-msgbox("1週のみにします")
+	msgbox("1週のみにします")
 endif
-
+//cを押した場合のみ設定できる
+ifb GETKEYSTATE(VK_s)
+	stHASH["expedition34"] = "ON"
+	WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
+	msgbox("遠征34のみに設定します")
+endif
+//戦闘中に再起動した場合、以前の設定を読み込む
 stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//出撃状態
-
 ifb stHASH["sortie"]="戦闘"
-
 	stHASH["gomap"] = READINI("count","ini-gomap",INIFILE)//出撃1回のみ
 	stHASH["MapNo"] = READINI("count","ini-MapNo",INIFILE)//map状態
 	stHASH["Rept"] = READINI("count","ini-Rept",INIFILE)//出撃状態
-
-
 else
-//行き先、繰り返す回数を聞いて配列変数に代入
+//行き先、周回回数を聞いて配列変数に代入
+//主要な行き先
 		stHASH["MapNo"] = MapNo(map)
 		WRITEINI("count","ini-MapNo",stHASH["MapNo"],INIFILE)
-		
+//その他を押した場合
+	ifb stHASH["MapNo"] = 0
+		stHASH["MapNo"] = mapEX(mapEX)
+		WRITEINI("count","ini-MapNo",stHASH["MapNo"],INIFILE)
+	endif
+//周回回数
 		stHASH["Rept"] = Reptcount(ct)
 		WRITEINI("count","ini-Rept",stHASH["Rept"],INIFILE)
-
 endif
+
+
+
+//繰り返す処理をこの後に記入
 WHILE !GETKEYSTATE(VK_ESC)
 
 stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//出撃状態
 stHASH["expedition"] = READINI("count","ini-expedition",INIFILE)//遠征状態
+stHASH["home"] = READINI("count","ini-home",INIFILE)//母港
 stHASH["supply"] = READINI("count","ini-supply",INIFILE)//補給状態
-stHASH["dock"] = READINI("count","ini-dock",INIFILE)//補給状態
-stHASH["MAX"] = READINI("count","ini-MAX",INIFILE)//補給状態
+stHASH["dock"] = READINI("count","ini-dock",INIFILE)//入渠
+stHASH["MAX"] = READINI("count","ini-MAX",INIFILE)//MAX
 stHASH["1艦目"] = READINI("count","ini-1艦目",INIFILE)//HP状態
 stHASH["2艦目"] = READINI("count","ini-2艦目",INIFILE)//HP状態
 stHASH["1艦目cnd"] = READINI("count","ini-1艦目cnd",INIFILE)//cnd
 stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
-
+stHASH["編成した"] = READINI("count","ini-編成した",INIFILE)//編成した後に1、出撃した後に0
 
 	ifb stHASH["sortie"]="戦闘"
+		ifb	GETKEYSTATE(VK_r)
+			stHASH["gomap"] = 1
+			msgbox("1週のみにします")
+		elseif	GETKEYSTATE(VK_b)
+			stHASH["gomap"] = 0
+			msgbox("繰り返します")
+		endif
+		ifb GETKEYSTATE(VK_s)
+			stHASH["expedition34"] = "ON"
+			WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
+			msgbox("遠征34のみに設定します")
+		endif
+
 
 	//陣形
 		ifb chkimg("羅針盤.bmp")
 			RR()
+		elseif chkimg("map32-4.bmp") and chkimg("cell-16.bmp")
+			call 32-4分岐選択.UWS
+		elseif chkimg("map32-4.bmp") and chkimg("cell-11.bmp")
+			call 32-4分岐選択-11.UWS
 		elseif chkimg("陣形選択.bmp") and chkimg("map確認.bmp")
 //			procedure Setformation(stHASH)
 			ifb chkimg("map1-5.bmp")
-						formation = 5
-			else
+				formation = 5
+			elseif (chkimg("map32-4.bmp") and chkimg("cell-4.bmp"))_
+				or (chkimg("map32-4.bmp") and chkimg("cell-14.bmp"))
+				formation = 4
+			elseif (chkimg("map32-4.bmp") and chkimg("cell-15.bmp"))
+				formation = 3
+			else 
 				formation = 1
 			endif
+			
+			print formation
+			ifb chkimg("map32-4.bmp")
+			endif
 				Sortieformation(formation)
-		elseif chkimg("離脱判定.bmp") or chkimg("離脱判定2.bmp")
-			RR()	
+		elseif chkimg("32-4ボスセリフ.bmp")
+			RR()
+		elseif chkimg("離脱判定.bmp") or chkimg("離脱判定2.bmp") or chkimg("離脱判定3.bmp")
+			ifb chkimg("map32-4.bmp") and chkimg("BossB.bmp")
+			call "ctrl_ent.uws"
+			else
+			RR()
+			endif	
 		elseif chkimg("戦果報告.bmp")
 			RR()
 			
@@ -103,6 +162,9 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 			Sortiebreak()
 		endif
 
+	stHASH["編成した"] = 0
+	WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
+	
 	elseif stHASH["sortie"]="母港"
 	//母港の処理------------------------------------------------------------------------
 	ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
@@ -112,37 +174,40 @@ stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 			//遠征帰還の処理
 			call "遠征帰還.uws"
 		elseif stHASH["expedition"] = "無遠征状態"
+
 			//遠征開始の処理
-			CALL "遠征マクロ3.UWS"
-			
+			ifb stHASH["expedition34"] = "ON"
+				CALL "遠征マクロ_34.UWS"
+			else
+				CALL "遠征マクロ3.UWS"
+			endif
+		
 		//遠征
 
 		
 		//母港諸操作
 		else//------------------------------------------------------------
+
 		
 			//大破入渠
-			ifb chkimg("入渠未使用.bmp",0) and stHASH["1艦目"] = "大破" or stHASH["2艦目"] = "大破"
+			ifb (chkimg("入渠未使用.bmp",0) and stHASH["1艦目"] = "大破")_
+			 or (chkimg("入渠未使用.bmp",0) and stHASH["2艦目"] = "大破")
 			fukidasi("大破入渠",1800,0)
 	 		sleep(0.5)
 				dock()
+				
 			//オリョクル変更
-			elseif stHASH["MapNo"]=23 and stHASH["1艦目"] = "大破" or stHASH["2艦目"] = "大破" or stHASH["1艦目"] = "入渠中" or stHASH["2艦目"] = "入渠中"
-			print stHASH["MapNo"]
+			elseif (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["1艦目"] = "大破")_
+			 or (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["2艦目"] = "大破")_
+			 or (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["1艦目"] = "入渠中")_
+			  or (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["2艦目"] = "入渠中")_
+			   or(stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["1艦目"] = "中破")_
+			   or(stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["2艦目"] = "中破")
 				change23()
+				stHASH["編成した"] = 1
+				WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
 			BHP()
-textblock
-			elseif stHASH["1艦目"] = "入渠中" or stHASH["2艦目"] = "入渠中"
-			fukidasi("オリョクル変更1",1800,0)
-
-				change23()
-			elseif stHASH["1艦目cnd"] = "NO"
-					fukidasi("オリョクル変更2",1800,0)
-				change23()
-			elseif stHASH["1艦目cnd"] = "OK" and stHASH["2艦目cnd"] = "NO"
-					fukidasi("オリョクル変更3",1800,0)
-				change23()
-endtextblock			
+		
 			//補給
 			elseif stHASH["supply"] = "off"
 			fukidasi("補給",1800,0)
@@ -153,16 +218,18 @@ endtextblock
 			fukidasi("解体",1800,0)
 
 				MAX()
-			else
+			elseif chkimg("home.bmp")
 			//出撃
 				fukidasi("出撃",1800,0)
-				ifb stHASH["Rept"] = 1 and stHASH["gomap"] = 1
+				ifb stHASH["Rept"] = 1 and stHASH["gomap"] = 1 or stHASH["MapNo"] = 1
 				sleep(30)
 					CONTINUE 1
 				else
-					GoSortiemap(stHASH)
+					GoSortie(stHASH)
 					stHASH["gomap"] = 1
 					WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
+					stHASH["編成した"] = 1
+					WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
 				endif
 			endif
 			
@@ -177,7 +244,20 @@ endtextblock
 
 		
 	endif
-sleep(1)
+sleep(random(30/10))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -213,10 +293,12 @@ PROCEDURE State()
 		stHASH["2艦目"] = READINI("count","ini-2艦目",INIFILE)//HP状態
 		stHASH["1艦目cnd"] = READINI("count","ini-1艦目cnd",INIFILE)//cnd
 		stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
-
+		stHASH["expedition34"] = READINI("count","ini-expedition34",INIFILE)//cnd
 //出撃中判定
+
 		ifb chkimg("第一艦隊出撃中.bmp",0)
 			stHASH["sortie"] = "戦闘"
+
 		else
 			stHASH["sortie"] = "母港"
 		endif
@@ -232,16 +314,28 @@ PROCEDURE State()
 	//	WRITEINI("count","ini-map",stHASH["map"],INIFILE)
 //マップ判定
 //遠征判定
-		ifb chkimg("帰還1.bmp") or chkimg("帰還2.bmp") or chkimg("帰還3.bmp")
-			stHASH["expedition"] = "遠征帰還"
-			
-		elseif chkimg("無遠征状態1.bmp") or chkimg("無遠征状態2.bmp") or chkimg("無遠征状態3.bmp")
-			stHASH["expedition"] = "無遠征状態"
-		else
-					stHASH["expedition"] = "遠征中"
-		endif
-		WRITEINI("count","ini-expedition",stHASH["expedition"],INIFILE)
+		ifb stHASH["expedition34"] = "ON"
+			ifb chkimg("帰還1.bmp") or chkimg("帰還2.bmp") or chkimg("帰還3.bmp")
+				stHASH["expedition"] = "遠征帰還"
+				
+			elseif chkimg("無遠征状態2.bmp") or chkimg("無遠征状態3.bmp")
+				stHASH["expedition"] = "無遠征状態"
+			elseif chkimg("無遠征状態1.bmp")
+						stHASH["expedition"] = "遠征中"
+			endif
+			WRITEINI("count","ini-expedition",stHASH["expedition"],INIFILE)
 
+		else
+			ifb chkimg("帰還1.bmp") or chkimg("帰還2.bmp") or chkimg("帰還3.bmp")
+				stHASH["expedition"] = "遠征帰還"
+				
+			elseif chkimg("無遠征状態1.bmp") or chkimg("無遠征状態2.bmp") or chkimg("無遠征状態3.bmp")
+				stHASH["expedition"] = "無遠征状態"
+			else
+						stHASH["expedition"] = "遠征中"
+			endif
+			WRITEINI("count","ini-expedition",stHASH["expedition"],INIFILE)
+		endif
 //遠征判定
 //母港判定
 		ifb chkimg("home.bmp")

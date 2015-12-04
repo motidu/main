@@ -207,7 +207,7 @@ fend
 
 FUNCTION MapNo(map)
 	map = SLCTBOX(SLCT_BTN,0,1669,286,"マップを選んでください","1-1"_
-	,"オリョクル","1-5","カレクル","4-3/")
+	,"オリョクル","1-5","カレクル","4-3","その他","遠征繰り返し")
 
 	SELECT map
 	CASE SLCT_1
@@ -219,7 +219,11 @@ FUNCTION MapNo(map)
 	CASE SLCT_4	 
 	a = 42
 	CASE SLCT_5	 
-	a = 43	
+	a = 43
+	CASE SLCT_6
+	a = 0
+	CASE SLCT_7
+	a = 1
 	DEFAULT
 	a = 0
 	SELEND
@@ -228,6 +232,45 @@ fend
 //出撃場所選択-------------------------------
 
 
+
+FUNCTION mapEX(mapEX)
+		map1 = SLCTBOX(SLCT_BTN,0,1669,286,"マップを選んでください","1","2","3","4","5","EV")
+		cell1 = SLCTBOX(SLCT_BTN,0,1669,286,"セルを選んでください","1","2","3","4","5","6")
+	SELECT map1
+		CASE SLCT_1
+		c = 10
+		CASE SLCT_2
+		c = 20	
+		CASE SLCT_3
+		c = 30
+		CASE SLCT_4	 
+		c = 40
+		CASE SLCT_5	 
+		c = 50
+		CASE SLCT_6	 
+		c = 300	
+		DEFAULT
+		msgbox ("エラー")
+	SELEND
+	SELECT cell1
+		CASE SLCT_1
+		d = 1
+		CASE SLCT_2
+		d = 2	
+		CASE SLCT_3
+		d = 3
+		CASE SLCT_4	 
+		d = 4
+		CASE SLCT_5	 
+		d = 5
+		CASE SLCT_6	 
+		d = 6	
+		DEFAULT
+		msgbox ("エラー")
+	SELEND
+
+	result = c + d
+fend
 //出撃回数-------------------------------
 
 FUNCTION Reptcount(ct)
@@ -280,22 +323,85 @@ fend
 
 
 //2-3
-PROCEDURE GoSortie23(stHASH[])
-			ifb chkimg("第一艦隊出撃可能.bmp",0) and stHASH["home"] = "OK"
-
+PROCEDURE GoSortie(stHASH[])
+ while chkimg("第一艦隊出撃可能.bmp",0)
+			ifb chkimg("home.bmp") and chkimg("出撃選択.bmp")=false
+				call "出撃前.uws"
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 				,1119,3,800,893,0)
 				KBD(vk_y,CLICK,0)//キーボード return
-				fukidasi("y",1800,0)
-				sleep(2)
-				call "出撃前.uws"
-				fukidasi("出撃前",1800,0)
-				CALL "オリョクル.UWS"
 				
-
-
-				sleep(5)
+			elseif chkimg("出撃選択.bmp") and chkimg("海域選択.bmp")=false
+				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+				,1119,3,800,893,0)
+				fukidasi("y",1800,0)
+				KBD(vk_y,CLICK,0)//キーボード return
+				
+			elseif chkimg("海域選択.bmp")
+				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+				,1119,3,800,893,0)
+				
+				SELECT stHASH["MapNo"]
+					CASE 11,12,13,14,15,16
+					ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+					,1119,3,800,893,0)
+					KBD(vk_q,CLICK,0)
+					CASE 21,22,23,24,25,26
+					KBD(vk_w,CLICK,0)
+					CASE 31,32,33,34,35,36
+					KBD(vk_e,CLICK,0)
+					CASE 41,42,43,44,45,46
+					KBD(vk_r,CLICK,0)
+					CASE 51,52,53,54,55,56
+					KBD(vk_t,CLICK,0)
+					CASE 301,302,303,304,305,306
+					KBD(vk_return,CLICK,0)
+					DEFAULT
+					msgbox("エラー")
+				SELEND
+				sleep(0.5)
+				SELECT stHASH["MapNo"]
+					CASE 11,21,31,41,51,301
+					KBD(vk_1,CLICK,0)
+					CASE 12,22,32,42,52,302
+					KBD(vk_2,CLICK,0)
+					CASE 13,23,33,43,53,303
+					KBD(vk_3,CLICK,0)
+					CASE 14,24,34,44,54,304
+					KBD(vk_4,CLICK,0)
+					CASE 15,25,35,45,55,305
+					KBD(vk_5,CLICK,0)
+					CASE 16,26,36,46,56,306
+					KBD(vk_6,CLICK,0)					
+					DEFAULT
+					msgbox("エラー")
+				SELEND
+				sleep(0.5)
+				ifb stHASH["MapNo"] > 300
+					kakunin = SLCTBOX(SLCT_BTN,0,1669,286,"ゲージ確認してください！","OK","NO")
+					SELECT kakunin
+						CASE SLCT_1
+							kakunin2 = SLCTBOX(SLCT_BTN,0,1669,286,"ほんとうに良いですか！？","OK","NO")
+							SELECT kakunin2
+							CASE SLCT_1
+							CASE SLCT_2
+							exitexit
+							SELEND	
+						CASE SLCT_2
+						exitexit
+					SELEND			
+				endif
+				ACW(GETID("提督業も忙しい！","HwndWrapper[KanColleViewer.exe"),1119,3,800,893,0)
+				KBD(vk_return,CLICK,0)//キーボード return
+				sleep(0.4)
+				call "ctrl_ent.uws"
+				
 			endif
+sleep(1)
+
+
+wend
+				fukidasi("出撃しました",1800,0)
 
 fend
 //1-5
