@@ -207,7 +207,7 @@ fend
 
 FUNCTION MapNo(map)
 	map = SLCTBOX(SLCT_BTN,0,1669,286,"マップを選んでください","1-1"_
-	,"オリョクル","1-5","カレクル","4-3","その他","遠征繰り返し")
+	,"オリョクル","1-5","カレクル","4-3","E-5","その他","遠征繰り返し")
 
 	SELECT map
 	CASE SLCT_1
@@ -221,8 +221,10 @@ FUNCTION MapNo(map)
 	CASE SLCT_5	 
 	a = 43
 	CASE SLCT_6
-	a = 0
+	a = 305
 	CASE SLCT_7
+	a = 0
+	CASE SLCT_8
 	a = 1
 	DEFAULT
 	a = 0
@@ -378,10 +380,10 @@ PROCEDURE GoSortie(stHASH[])
 				SELEND
 				sleep(0.5)
 				ifb stHASH["MapNo"] > 300
-					kakunin = SLCTBOX(SLCT_BTN,0,1669,286,"ゲージ確認してください！","OK","NO")
+					kakunin = SLCTBOX(SLCT_BTN,0,1669,286,"ゲージ確認してください！ ","OK","NO")
 					SELECT kakunin
 						CASE SLCT_1
-							kakunin2 = SLCTBOX(SLCT_BTN,0,1669,286,"ほんとうに良いですか！？","OK","NO")
+							kakunin2 = SLCTBOX(SLCT_BTN,0,1669,286,"三式弾←→徹甲弾等　ほんとうに良いですか！？","OK","NO")
 							SELECT kakunin2
 							CASE SLCT_1
 							CASE SLCT_2

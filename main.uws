@@ -95,8 +95,10 @@ stHASH["•Ò¬‚µ‚½"] = READINI("count","ini-•Ò¬‚µ‚½",INIFILE)//•Ò¬‚µ‚½Œã‚É1AoŒ
 		ifb chkimg("—…j”Õ.bmp")
 			RR()
 		elseif chkimg("map32-4.bmp") and chkimg("cell-16.bmp")
+//	msgbox("•ªŠò‚Å‚·")
 			call 32-4•ªŠò‘I‘ğ.UWS
 		elseif chkimg("map32-4.bmp") and chkimg("cell-11.bmp")
+//	msgbox("•ªŠò‚Å‚·")
 			call 32-4•ªŠò‘I‘ğ-11.UWS
 		elseif chkimg("wŒ`‘I‘ğ.bmp") and chkimg("mapŠm”F.bmp")
 //			procedure Setformation(stHASH)
@@ -126,7 +128,9 @@ stHASH["•Ò¬‚µ‚½"] = READINI("count","ini-•Ò¬‚µ‚½",INIFILE)//•Ò¬‚µ‚½Œã‚É1AoŒ
 		elseif chkimg("í‰Ê•ñ.bmp")
 			RR()
 			
-		elseif chkimg("Šl“¾‰æ–Ê.bmp") or chkimg("Šl“¾‰æ–Ê2.bmp") or chkimg("Šl“¾‰æ–Ê3.bmp") or chkimg("Šl“¾‰æ–Ê4.bmp")
+		elseif chkimg("Šl“¾‰æ–Ê.bmp") or chkimg("Šl“¾‰æ–Ê2.bmp")_
+		 or chkimg("Šl“¾‰æ–Ê3.bmp") or chkimg("Šl“¾‰æ–Ê4.bmp")_
+		  or chkimg("Šl“¾‰æ–Ê5.bmp") or chkimg("Šl“¾‰æ–Ê6.bmp")
 			RR()
 		elseif chkimg("iŒ‚‘I‘ğ.bmp")
 			RR()
@@ -244,7 +248,8 @@ stHASH["•Ò¬‚µ‚½"] = READINI("count","ini-•Ò¬‚µ‚½",INIFILE)//•Ò¬‚µ‚½Œã‚É1AoŒ
 
 		
 	endif
-sleep(random(30/10))
+	sleep(0.5)
+//sleep(random(20/10))
 
 
 
