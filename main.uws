@@ -1,80 +1,92 @@
-//ƒƒCƒ“ˆ—
-//THREAD‚Å•À—ñˆ—‚ğ‚µ‚Äó‘Ô‚àæ“¾‚·‚é
+//™ƒƒCƒ“ˆ—
 
-//ŒJ‚è•Ô‚³‚È‚¢ˆ—A‰Šúİ’è
-call "FUNCTIONS.UWS"
-HASHTBL StHASH = HASH_CASECARE
-INIFILE="C:\1\2-3.INI"
-THREAD State()
-
-
-
-sleep(1)//THREAD State()‚Åæ“¾‚·‚é‚Ü‚Å‚Ì‘Ò‚¿ŠÔ@‚P`‚Q‚®‚ç‚¢
-
-
-
-//‰Šú’l
-map = 0
-ct = 0
-mapEX = 0
-stHASH["gomap"] = 0
-
-stHASH["expedition34"] = "OFF"
-WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
-stHASH["•Ò¬‚µ‚½"] = 0
-WRITEINI("count","ini-•Ò¬‚µ‚½",stHASH["•Ò¬‚µ‚½"],INIFILE)
+	//ˆ—‚ğ‘‚­‘O‚É‘‚¢‚Ä‚¨‚­‚±‚Æ
+		//•Êƒtƒ@ƒCƒ‹‚ÌŠÖ”ƒtƒ@ƒCƒ‹‚ğæ“¾
+		call "FUNCTIONS.UWS"
+		//ƒnƒbƒVƒ…‚ÌéŒ¾
+		HASHTBL StHASH = HASH_CASECARE
+		//”’l‚ğ•Û‘¶‚µ‚Ä‚éƒtƒ@ƒCƒ‹‚©‚ç“Ç‚İ‚Ş
+		INIFILE="C:\1\2-3.INI"
+		//ƒTƒuˆ—‚Åî•ñ‚ğæ“¾‚·‚é‚½‚ßAƒTƒuˆ—‚ğŠJn
+		THREAD State()
+		//•À—ñ‚ÌƒTƒuˆ—‚Å‰æ–Ê‚Ìî•ñ‚ğæ“¾‚·‚é‘Ò‚¿ŠÔ@1`2•b•K—v
+		sleep(1)
 
 
+		//•Ï”‚Ì‰Šú’l‚ÌéŒ¾
+		map = 0				//mapSLCT‚Ì‰Šú’l
+		ct = 0				//count-ü‰ñ‰ñ”‚Ì‰Šú’l@Reptcount()‚É‘ã“ü‚µ‚Ä‚é
+		mapSLCTresult = 0	//mapSLCTŠÖ”‚Ì–ß‚è’l‚Ì‰Šú’l
+		supplycount = 0		//•â‹‹‰ñ”‚Ì‰Šú’l@•â‹‹‚ğŒJ‚è•Ô‚³‚È‚¢‚æ‚¤‚É‚·‚é‚½‚ß
+		stHASH["gomap"] = 0	//oŒ‚‰ñ”‚Ì‰Šú’l 0¨ŒJ‚è•Ô‚· 1¨1‰ñ‚¾‚¯oŒ‚‚·‚é
 
-//a‚ğ‰Ÿ‚µ‚½ê‡‚Ì‚İİ’è‚Å‚«‚é
-ifb GETKEYSTATE(VK_r)
-	stHASH["gomap"] = 1
-	WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
-	msgbox("1T‚Ì‚İ‚É‚µ‚Ü‚·")
-endif
-//c‚ğ‰Ÿ‚µ‚½ê‡‚Ì‚İİ’è‚Å‚«‚é
-ifb GETKEYSTATE(VK_s)
-	stHASH["expedition34"] = "ON"
-	WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
-	msgbox("‰“ª34‚Ì‚İ‚Éİ’è‚µ‚Ü‚·")
-endif
-//í“¬’†‚ÉÄ‹N“®‚µ‚½ê‡AˆÈ‘O‚Ìİ’è‚ğ“Ç‚İ‚Ş
-stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//oŒ‚ó‘Ô
-ifb stHASH["sortie"]="í“¬"
-	stHASH["gomap"] = READINI("count","ini-gomap",INIFILE)//oŒ‚1‰ñ‚Ì‚İ
-	stHASH["MapNo"] = READINI("count","ini-MapNo",INIFILE)//mapó‘Ô
-	stHASH["Rept"] = READINI("count","ini-Rept",INIFILE)//oŒ‚ó‘Ô
-else
-//s‚«æAü‰ñ‰ñ”‚ğ•·‚¢‚Ä”z—ñ•Ï”‚É‘ã“ü
-//å—v‚Ès‚«æ
-		stHASH["MapNo"] = MapNo(map)
-		WRITEINI("count","ini-MapNo",stHASH["MapNo"],INIFILE)
-//‚»‚Ì‘¼‚ğ‰Ÿ‚µ‚½ê‡
-	ifb stHASH["MapNo"] = 0
-		stHASH["MapNo"] = mapEX(mapEX)
-		WRITEINI("count","ini-MapNo",stHASH["MapNo"],INIFILE)
-	endif
-//ü‰ñ‰ñ”
-		stHASH["Rept"] = Reptcount(ct)
-		WRITEINI("count","ini-Rept",stHASH["Rept"],INIFILE)
-endif
+		stHASH["expedition34"] = "OFF"
+		WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
+		stHASH["•Ò¬‚µ‚½"] = 0
+		WRITEINI("count","ini-•Ò¬‚µ‚½",stHASH["•Ò¬‚µ‚½"],INIFILE)
+
+		//ƒ‹[ƒv‘O‚Ìˆ—
+
+			//1T‚Ì‚İ‚É•ÏX
+			ifb GETKEYSTATE(VK_r)
+				stHASH["gomap"] = 1
+				WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
+				msgbox("1T‚Ì‚İ‚É‚µ‚Ü‚·")
+			endif
+
+			//
+			ifb GETKEYSTATE(VK_s)
+				stHASH["expedition34"] = "ON"
+				WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
+				msgbox("‰“ª34‚Ì‚İ‚Éİ’è‚µ‚Ü‚·")
+			endif
+
+			//í“¬’†‚ÉÄ‹N“®‚µ‚½ê‡AˆÈ‘O‚Ìİ’è‚ğ“Ç‚İ‚Ş
+			stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//oŒ‚ó‘Ô
+			ifb stHASH["sortie"]="í“¬"
+				stHASH["gomap"] = READINI("count","ini-gomap",INIFILE)//oŒ‚1‰ñ‚Ì‚İ
+				stHASH["MapNo"] = READINI("count","ini-MapNo",INIFILE)//mapó‘Ô
+				stHASH["Rept"] = READINI("count","ini-Rept",INIFILE)//oŒ‚ó‘Ô
+			else
+			//s‚«æAü‰ñ‰ñ”‚ğ•·‚¢‚Ä”z—ñ•Ï”‚É‘ã“ü
+			//å—v‚Ès‚«æ
+					stHASH["MapNo"] = MapNo(map)
+					WRITEINI("count","ini-MapNo",stHASH["MapNo"],INIFILE)
+			//‚»‚Ì‘¼‚ğ‰Ÿ‚µ‚½ê‡
+				ifb stHASH["MapNo"] = 0
+					stHASH["MapNo"] = mapSLCT(mapSLCTresult)
+					WRITEINI("count","ini-MapNo",stHASH["MapNo"],INIFILE)
+				endif
+			//ü‰ñ‰ñ”
+					stHASH["Rept"] = Reptcount(ct)
+					WRITEINI("count","ini-Rept",stHASH["Rept"],INIFILE)
+			endif
 
 
 
 //ŒJ‚è•Ô‚·ˆ—‚ğ‚±‚ÌŒã‚É‹L“ü
 WHILE !GETKEYSTATE(VK_ESC)
-
-stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//oŒ‚ó‘Ô
-stHASH["expedition"] = READINI("count","ini-expedition",INIFILE)//‰“ªó‘Ô
-stHASH["home"] = READINI("count","ini-home",INIFILE)//•ê`
-stHASH["supply"] = READINI("count","ini-supply",INIFILE)//•â‹‹ó‘Ô
-stHASH["dock"] = READINI("count","ini-dock",INIFILE)//“ü‹”
-stHASH["MAX"] = READINI("count","ini-MAX",INIFILE)//MAX
-stHASH["1ŠÍ–Ú"] = READINI("count","ini-1ŠÍ–Ú",INIFILE)//HPó‘Ô
-stHASH["2ŠÍ–Ú"] = READINI("count","ini-2ŠÍ–Ú",INIFILE)//HPó‘Ô
-stHASH["1ŠÍ–Úcnd"] = READINI("count","ini-1ŠÍ–Úcnd",INIFILE)//cnd
-stHASH["2ŠÍ–Úcnd"] = READINI("count","ini-2ŠÍ–Úcnd",INIFILE)//cnd
-stHASH["•Ò¬‚µ‚½"] = READINI("count","ini-•Ò¬‚µ‚½",INIFILE)//•Ò¬‚µ‚½Œã‚É1AoŒ‚‚µ‚½Œã‚É0
+	//•ê`‚É–ß‚é“xæ“¾‚·‚éƒf[ƒ^
+		//oŒ‚ó‘Ô
+		stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)
+		//‰“ªó‘Ô
+		stHASH["expedition"] = READINI("count","ini-expedition",INIFILE)
+		//•ê`
+		stHASH["home"] = READINI("count","ini-home",INIFILE)
+		//•â‹‹ó‘Ô
+		stHASH["supply"] = READINI("count","ini-supply",INIFILE)
+		//“ü‹”
+		stHASH["dock"] = READINI("count","ini-dock",INIFILE)
+		//•ê`‚ÌŠÍ”‚ªÅ‘å‚©‚Ç‚¤‚©
+		stHASH["MAX"] = READINI("count","ini-MAX",INIFILE)
+		//1,2ŠÍ–Ú‚Ì‘Ì—Íi“ü‹”A‘å”jA’†”jA¬”jˆÈãj
+		stHASH["1ŠÍ–Ú"] = READINI("count","ini-1ŠÍ–Ú",INIFILE)
+		stHASH["2ŠÍ–Ú"] = READINI("count","ini-2ŠÍ–Ú",INIFILE)
+		//1,2ŠÍ–Ú‚ÌƒRƒ“ƒfƒBƒVƒ‡ƒ“iƒLƒ‰ƒLƒ‰A”’AÔj
+		stHASH["1ŠÍ–Úcnd"] = READINI("count","ini-1ŠÍ–Úcnd",INIFILE)
+		stHASH["2ŠÍ–Úcnd"] = READINI("count","ini-2ŠÍ–Úcnd",INIFILE)
+		//‹A`Œã•Ò¬‚µ‚½‚©‚Ç‚¤‚©@•Ò¬‚Å1AoŒ‚‚µ‚½Œã0‚É‚à‚Ç‚é
+		stHASH["•Ò¬‚µ‚½"] = READINI("count","ini-•Ò¬‚µ‚½",INIFILE)
 
 	ifb stHASH["sortie"]="í“¬"
 				ACW(GETID("’ñ“Â‹Æ‚à–Z‚µ‚¢IX","HwndWrapper[KanColleViewer.exe")_
@@ -107,12 +119,18 @@ stHASH["•Ò¬‚µ‚½"] = READINI("count","ini-•Ò¬‚µ‚½",INIFILE)//•Ò¬‚µ‚½Œã‚É1AoŒ
 				formation = 5
 			elseif chkimg("map4-3.bmp") and chkimg("cell-16.bmp")
 				formation = 5
+			elseif chkimg("map4-3.bmp") and chkimg("cell-7.bmp")
+				formation = 5
 			elseif chkimg("map1-5.bmp")
 				formation = 5
+			elseif chkimg("map5-4.bmp") and chkimg("BossB.bmp")
+				formation = 4
 			else 
 				formation = 1
 			endif
-			
+
+			print "-"
+			sleep(0.1)
 			print formation
 			Sortieformation(formation)
 			
@@ -138,7 +156,12 @@ endtextblock
 		elseif chkimg("—£’E”»’è.bmp") or chkimg("—£’E”»’è2.bmp") or chkimg("—£’E”»’è3.bmp")
 			ifb (chkimg("map32-4.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map32-5.bmp") and chkimg("BossB.bmp"))_
-				or (chkimg("map32-5.bmp") and chkimg("cell-8.bmp"))
+				or (chkimg("map32-5.bmp") and chkimg("cell-8.bmp"))_
+				or (chkimg("map5-2.bmp") and chkimg("BossB.bmp"))_
+				or (chkimg("map2-5.bmp") and chkimg("BossB.bmp"))_
+				or (chkimg("map4-2.bmp") and chkimg("BossB.bmp") and !chkimg("win.bmp"))_
+				or (chkimg("map4-4.bmp") and chkimg("BossB.bmp"))
+
 				sleep(1)		
 				ACW(GETID("’ñ“Â‹Æ‚à–Z‚µ‚¢IX","HwndWrapper[KanColleViewer.exe")_
 				,1119,-35,800,900,0)
@@ -149,19 +172,20 @@ endtextblock
 			else
 			RR()
 			endif	
-		elseif chkimg("í‰Ê•ñ.bmp")
+		elseif chkimg("í‰Ê•ñ.bmp") or chkimg("friendfleetarea.bmp")
 			RR()
-		elseif chkimg("Šl“¾‰æ–Ê.bmp") or chkimg("Šl“¾‰æ–Ê2.bmp")_
+		elseif chkimg("Šl“¾‰æ–Ê.bmp") or chkimg("friendfleetarea.bmp") or chkimg("Šl“¾‰æ–Ê2.bmp")_
 				 or chkimg("Šl“¾‰æ–Ê3.bmp") or chkimg("Šl“¾‰æ–Ê4.bmp")_
 				 or chkimg("Šl“¾‰æ–Ê5.bmp") or chkimg("Šl“¾‰æ–Ê6.bmp")
 			RR()
 		elseif chkimg("iŒ‚‘I‘ğ.bmp")
-			ifb chkimg("map4-3.bmp") and chkimg("cell-16.bmp")
+			ifb (chkimg("map4-3.bmp") and chkimg("cell-16.bmp"))_
+				or (chkimg("map4-3.bmp") and chkimg("cell-7.bmp"))
 					kbd(vk_back,click)
 			else
 				RR()
 			endif
-			elseif chkimg("Ÿ.bmp")
+		elseif chkimg("Ÿ.bmp")
 			RR()		
 		elseif chkimg("‹A.bmp")
 			RR()
@@ -190,11 +214,21 @@ endtextblock
 	//	RR()
 		
 		elseif chkimg("‘å”jB.bmp",0)
-			Sortiebreak()
+			ifb chkimg("map5-4.bmp") and chkimg("cell-10.bmp")
+				Sortiebreak2()
+			else
+				Sortiebreak()
+			endif
 		endif
+
+
+
 
 	stHASH["•Ò¬‚µ‚½"] = 0
 	WRITEINI("count","ini-•Ò¬‚µ‚½",stHASH["•Ò¬‚µ‚½"],INIFILE)
+	supplycount = 0
+
+
 	
 	elseif stHASH["sortie"]="•ê`"
 	//•ê`‚Ìˆ—------------------------------------------------------------------------
@@ -218,20 +252,24 @@ endtextblock
 		
 		//•ê`”‘€ì
 		else//------------------------------------------------------------
+					fukidasi("+ supplycount +"+ supplycount +,1500,0)
 
 		
 			//‘å”j“ü‹”
-			ifb stHASH["dock"] = "‘å”j"
+			ifb stHASH["dock"] = "‘å”j" and chkimg("ƒhƒbƒO–¢g—p.bmp")
 				fukidasi("‘å”j“ü‹”",1800,0)
+				fukidasi("1",1500,0)
 				dock(stHASH)
 				
 			//ƒIƒŠƒ‡ƒNƒ‹•ÏX
 			elseif (stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["1ŠÍ–Ú"] = "‘å”j")_
 			 or (stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["2ŠÍ–Ú"] = "‘å”j")_
 			 or (stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["1ŠÍ–Ú"] = "“ü‹”’†")_
-			  or (stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["2ŠÍ–Ú"] = "“ü‹”’†")_
-			   or(stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["1ŠÍ–Ú"] = "’†”j")_
-			   or(stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["2ŠÍ–Ú"] = "’†”j")
+			 or (stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["2ŠÍ–Ú"] = "“ü‹”’†")_
+			 or (stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["1ŠÍ–Ú"] = "’†”j")_
+			 or (stHASH["MapNo"]=23 and stHASH["•Ò¬‚µ‚½"] = 0 and stHASH["2ŠÍ–Ú"] = "’†”j")
+			 fukidasi("2",1500,0)
+
 				change23()
 				stHASH["•Ò¬‚µ‚½"] = 1
 				WRITEINI("count","ini-•Ò¬‚µ‚½",stHASH["•Ò¬‚µ‚½"],INIFILE)
@@ -239,19 +277,40 @@ endtextblock
 		
 			//•â‹‹
 			elseif stHASH["supply"] = "off"
+			fukidasi("3",1500,0)
 			fukidasi("•â‹‹",1800,0)
+				ifb supplycount > 3
+					fukidasi(" supplycount : "+ supplycount +,1800,0)
+					ifb stHASH["MapNo"]=23 
+						change23()
+						stHASH["•Ò¬‚µ‚½"] = 1
+						WRITEINI("count","ini-•Ò¬‚µ‚½",stHASH["•Ò¬‚µ‚½"],INIFILE)
+						BHP()
+						supplycount = 0						
+					else
+						for i = 1 to 30
+							sleep(1)
+							fukidasi("count"+ i +,1800,0)
+						next
+					endif
+				else
+					Supplyone()
+					supplycount = supplycount + 1
+				endif
 
-				Supplyone()
+
 			//‰ğ‘Ì
 			elseif stHASH["MAX"] = "MAX"
+			fukidasi("4",1500,0)
 			fukidasi("‰ğ‘Ì",1800,0)
 
 				MAX()
 			elseif chkimg("home.bmp")
+			fukidasi("5",1500,0)
 			//oŒ‚
 				fukidasi("oŒ‚",1800,0)
 				ifb stHASH["Rept"] = 1 and stHASH["gomap"] = 1 or stHASH["MapNo"] = 1
-				sleep(30)
+					sleep(30)
 					CONTINUE 1
 				else
 					GoSortie(stHASH)
@@ -274,11 +333,11 @@ endtextblock
 		
 	endif
 	ifb stHASH["MapNo"] = 43
-	sleep(0.1)
+	sleep(1)
 	else
 	sleep(0.5)
 	endif
-//sleep(random(20/10))
+sleep(random(10/10))
 
 
 
@@ -306,7 +365,7 @@ endtextblock
 
 wend
 
-//•À—ñ•”•ª
+//™ƒTƒuˆ— THREAD State()‚ÅŒÄ‚Ño‚³‚ê‚é
 
 
 PROCEDURE State()
@@ -395,7 +454,7 @@ PROCEDURE State()
 
 	//oŒ‚”»’è
 	//“ü‹””»’è
-	ifb chkimg("‘å”j_.bmp",0) or chkimg("‘å”j__2.bmp",0)
+	ifb chkimg("‘å”j_.bmp",0) or chkimg("‘å”j__2.bmp",0) or chkimg("‘å”j__3.bmp",0)
 		stHASH["dock"] = "‘å”j"
 	else
 		stHASH["dock"] = "–³"
@@ -407,6 +466,7 @@ PROCEDURE State()
 		stHASH["supply"] = "off"
 	else
 		stHASH["supply"] = "on"
+		supplycount = 0
 	endif
 	WRITEINI("count","ini-supply",stHASH["supply"],INIFILE)
 
