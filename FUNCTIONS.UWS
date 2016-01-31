@@ -1,23 +1,24 @@
-//FUNCTIONS.UWS
+//FUNCTIONS.UWS 関数はこちらに記録されています
 
 textblock
+コピペ用＆備忘録としてtextblock内に書いています
+-----------------------------------------------------
 ・PROCEDURE 戻り値なし
 PROCEDURE 関数名( 引数,　Var 引数,　引数[],　Var 引数[][],　引数=定数, …. )
 　　　　処理
 FEND
-
-
+-----------------------------------------------------
 ・FUNCTION 戻り値RESULTのある自作関数を定義
 FUNCTION 関数名( 引数,　Var 引数,　引数[],　Var 引数[][],　引数=定数, …. )
 　　　　処理
 　　　　RESULT = 戻り値 　　　//　Result に戻り値を入れる
 FEND
 
-Var 宣言を付けると引数を変更可能とする(参照引数)
-配列変数には次元数分 []を付ける　(２次元配列の場合 引数[][] )
-= 定数 にてデフォルトパラメータを指定できる
-（デフォルトパラメータ以降に通常引数を書く事はNG）
-
+※Var 宣言を付けると引数を変更可能とする(参照引数)
+　配列変数には次元数分 []を付ける　(２次元配列の場合 引数[][] )
+　= 定数 にてデフォルトパラメータを指定できる
+　（デフォルトパラメータ以降に通常引数を書く事はNG）
+-----------------------------------------------------
 endtextblock
 
 
@@ -25,18 +26,16 @@ endtextblock
 
 
 
-//出撃 Sortie-------------------------------
-	//R連打
-	PROCEDURE RR()
+//出撃 Sortie-------------------------------出撃関係の関数です
+	PROCEDURE RR()//------------------------Rボタンを連打する場合の関数です
 		ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 		,1119,-35,800,900,0)
 		KBD(VK_r,CLICK,100) //出撃中はR連打
 		m=3
 		sleep(m)
 	fend
-	//ボス戦、夜戦まで
-	PROCEDURE Sortieboss()
-
+	
+	PROCEDURE Sortieboss()//----------------ボス戦、夜戦へ行く場合の関数です
 			FUKIDASI("Boss",1120,0)
 			Sleep(1)
 			ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
@@ -47,27 +46,23 @@ endtextblock
 			KBD(vk_return,up)
 			KBD(vk_ctrl,up)
 	FEND		
-	//戦果報告→母港へ帰還
-	PROCEDURE Sortiereport()
-			ifb chkimg("戦果報告.bmp")
-				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
-				,1119,-35,800,900,0)
-				ifb chkimg("BossB.bmp")
-					call "母港へ戻る.uws"
-				endif
-				
-				fukidasi("戦果報告",1800,0)
+
+	PROCEDURE Sortiereport()//--------------戦果報告のあと母港へ帰還
+		ifb chkimg("戦果報告.bmp")
+			ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+			,1119,-35,800,900,0)
+			ifb chkimg("BossB.bmp")
+				call "母港へ戻る.uws"
 			endif
-		
+			fukidasi("戦果報告",1800,0)
+		endif
 	FEND
-	//戦果報告
-	//ボス戦、夜戦まで
 	
-	//大破
-	PROCEDURE Sortiebreak()
-	FUKIDASI("大破",1120,0)
-			sleep(1)
-			ACW(GETID("大破進撃警告","#32770"),1374,308,290,165,0)
+
+	PROCEDURE Sortiebreak()//大破-----------戦果報告のあと母港へ帰還
+		FUKIDASI("大破",1120,0)
+		sleep(1)
+		ACW(GETID("大破進撃警告","#32770"),1374,308,290,165,0)
 		BTN(LEFT,CLICK,1488,369,0)
 		BTN(LEFT,CLICK,1462,361,0)
 		BTN(LEFT,CLICK,1444,385,0)
@@ -75,41 +70,28 @@ endtextblock
 		BTN(LEFT,CLICK,1446,445,0)
 		BTN(LEFT,CLICK,1446,445,0)
 		sleep(5)
-		
 		FUKIDASI("break",1800,0)
 	fend
-	//大破
-	
-	//陣形-------------------------------
-	
-procedure Setformation(stHASH[])
-	SELECT stHASH["cellNo"]
-		CASE 11
-			formation = 1
-		CASE 23
-			formation = 1
-		CASE 15
-			formation = 5
-		CASE 42
-			formation = 5
-		DEFAULT
-			formation = 1
-	SELEND
-fend
-	//陣形-------------------------------
-	//退却場所-------------------------------
 
-
-procedure retreat(stHASH[])
-	SELECT stHASH["cellNo"]
-		CASE 11
-		CASE 23
-		CASE 15
-		CASE 43
-		DEFAULT
-	SELEND
-fend
-	//退却場所-------------------------------
+	PROCEDURE Sortiebreak2()
+		ACW(GETID("大破進撃警告","#32770"),1374,266,290,165,0)
+		BTN(LEFT,CLICK,1613,407,10)
+	fend
+	
+	procedure Setformation(stHASH[])//陣形--特定のマップのデフォルトフォーメーションを指示します
+		SELECT stHASH["cellNo"]
+			CASE 11
+				formation = 1
+			CASE 23
+				formation = 1
+			CASE 15
+				formation = 5
+			CASE 42
+				formation = 5
+			DEFAULT
+				formation = 1
+		SELEND
+	fend
 	
 		//第一陣形
 	procedure Sortieformation(formation)
@@ -147,11 +129,10 @@ PROCEDURE F5()
 					BTN(LEFT,click,G_IMG_X,G_IMG_Y,0)
 				while !chkimg("gamestart.bmp")
 				sleep(1)
+				wend
 					ifb chkimg("gamestart.bmp")
 					BTN(LEFT,click,G_IMG_X,G_IMG_Y,0)
-					exit
 					endif
-				wend
 Fend				
 //母港へ BackHomePort-------------------------------
 PROCEDURE BHP()
@@ -202,9 +183,11 @@ FEND
 //入渠-------------------------------
 PROCEDURE dock(stHASH[])
 FUKIDASI("修理",1800,0)
+		ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+			,1119,3,800,893,0)
 	ifb chkimg("出撃T.bmp",0)
 		ifb chkimg("入渠未使用.bmp",0)
-			ifb stHASH["MapNo"] = 43 
+			ifb stHASH["MapNo"] = 43 or stHASH["MapNo"] = 15
 				call "大破入渠バケツ.UWS"
 			else
  				call "大破入渠new.uws"
@@ -228,8 +211,9 @@ fend
 //出撃場所選択-------------------------------
 
 FUNCTION MapNo(map)
-	map = SLCTBOX(SLCT_BTN,0,1669,286,"マップを選んでください","1-1"_
-	,"オリョクル","1-5","カレクル","4-3","E-5","その他","遠征繰り返し")
+	map = SLCTBOX(SLCT_BTN,0,1669,286,"マップを選んでください",_
+	"1-1","オリョクル","1-5","カレクル","4-3",_
+	"5-4","E-5","その他","遠征繰り返し")
 
 	SELECT map
 	CASE SLCT_1
@@ -243,10 +227,12 @@ FUNCTION MapNo(map)
 	CASE SLCT_5	 
 	a = 43
 	CASE SLCT_6
-	a = 305
+	a = 54
 	CASE SLCT_7
-	a = 0
+	a = 305
 	CASE SLCT_8
+	a = 0
+	CASE SLCT_9
 	a = 1
 	DEFAULT
 	a = 0
@@ -257,7 +243,7 @@ fend
 
 
 
-FUNCTION mapEX(mapEX)
+FUNCTION mapSLCT(mapSLCTresult)
 		map1 = SLCTBOX(SLCT_BTN,0,1669,286,"マップを選んでください","1","2","3","4","5","EV")
 		cell1 = SLCTBOX(SLCT_BTN,0,1669,286,"セルを選んでください","1","2","3","4","5","6")
 	SELECT map1
@@ -363,24 +349,42 @@ PROCEDURE GoSortie(stHASH[])
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 				,1119,3,800,893,0)				
 				SELECT stHASH["MapNo"]
+				
 					CASE 11,12,13,14,15,16
-					ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
-					,1119,3,800,893,0)
-					KBD(vk_q,CLICK,0)
+						ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+						,1119,3,800,893,0)
+						KBD(vk_q,CLICK,0)
+								sleep(0.5)
+						KBD(vk_q,CLICK,0)
+						
 					CASE 21,22,23,24,25,26
-					KBD(vk_w,CLICK,0)
-					CASE 31,32,33,34,35,36
-					KBD(vk_e,CLICK,0)
+						KBD(vk_w,CLICK,0)
+								sleep(0.5)
+						KBD(vk_w,CLICK,0)
+						
+						CASE 31,32,33,34,35,36
+						KBD(vk_e,CLICK,0)
+								sleep(0.5)
+						KBD(vk_e,CLICK,0)
+						
 					CASE 41,42,43,44,45,46
-					KBD(vk_r,CLICK,0)
-					CASE 51,52,53,54,55,56
-					KBD(vk_t,CLICK,0)
+						KBD(vk_r,CLICK,0)
+								sleep(0.5)					
+						KBD(vk_r,CLICK,0)
+						
+						CASE 51,52,53,54,55,56
+						KBD(vk_t,CLICK,0)
+								sleep(0.5)
+						KBD(vk_t,CLICK,0)
+						
 					CASE 301,302,303,304,305,306
-					KBD(vk_return,CLICK,0)
-					DEFAULT
-					msgbox("エラー")
+						KBD(vk_return,CLICK,0)
+						DEFAULT
+						msgbox("エラー")
 				SELEND
-				sleep(0.5)
+				
+				sleep(1)
+				
 				SELECT stHASH["MapNo"]
 					CASE 11,21,31,41,51,301
 					KBD(vk_1,CLICK,0)
