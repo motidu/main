@@ -22,6 +22,71 @@ FEND
 endtextblock
 
 
+FUNCTION 画像クリック(gazou_name,gazou_name2,Detail1="",Detail2="",retry=999,verify_flg=True)
+	RESULT = False
+	For i = 0 To retry
+		Ifb CHKIMG(gazou_name + ".bmp",0)
+			BTN(LEFT,CLICK,G_IMG_X+RANDOM(9),G_IMG_Y+RANDOM(9),250)
+			SLEEP(1.2)
+				Ifb !CHKIMG(gazou_name + ".bmp",Detail1)
+					RESULT = True
+					Break
+				Elseif verify_flg=False
+					RESULT = True
+					Break
+				Endif
+		Elseif CHKIMG(gazou_name2 + ".bmp",Detail2)
+					RESULT = True
+					Break
+		ELSE
+			SLEEP(0.3)
+			Print "待ちます(" + i + "/" + retry + ")"
+		Endif
+	Next
+FEND
+
+FUNCTION クリック(gazou_name,gazou_name2,Detail1="",Detail2="",retry=999,verify_flg=True)
+	RESULT = False
+	For i = 0 To retry
+		Ifb CHKIMG(gazou_name + ".bmp",0)
+			KBD(Detail1 +,CLICK)
+			SLEEP(1.2)
+				Ifb !CHKIMG(gazou_name + ".bmp",Detail1)
+					RESULT = True
+					Break
+				Elseif verify_flg=False
+					RESULT = True
+					Break
+				Endif
+		Elseif CHKIMG(gazou_name2 + ".bmp",Detail2)
+					RESULT = True
+					Break
+		ELSE
+			SLEEP(0.3)
+			Print "待ちます(" + i + "/" + retry + ")"
+		Endif
+	Next
+FEND
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -417,12 +482,14 @@ PROCEDURE GoSortie(stHASH[])
 					SELEND			
 				endif
 			endtextblock	
-			elseif chkimg("決定.bmp")	
+			elseif chkimg("決定.bmp")
+			HP確認(stHASH)	
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 				,1119,3,800,893,0)
 				fukidasi("return",1800,0)
 				KBD(vk_return,CLICK,0)//キーボード return
-			elseif chkimg("出撃開始.bmp")	
+			elseif chkimg("出撃開始.bmp")
+			HP確認(stHASH)
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 				,1119,3,800,893,0)				
 				fukidasi("ctrl_ent",1800,0)				
@@ -475,6 +542,15 @@ fend
 PROCEDURE change23()
 call "オリョクル変更"
 fend
-
 //オリョクル編成
+
+
+PROCEDURE HP確認(stHASH[])
+ifb stHASH["MapNo"] > 300
+	ifb !chkimg("33-2乙HP.bmp")
+		msgbox("HP確認してください")
+		endif
+endif
+fend
+
 

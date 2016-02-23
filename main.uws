@@ -3,7 +3,7 @@
 	//処理を書く前に書いておくこと
 		//別ファイルの関数ファイルを取得
 		call "FUNCTIONS.UWS"
-		//ハッシュの宣言
+		//ハッシュの宣言 変数はStHASH、大文字小文字を区別するためにHASH_CASECARE
 		HASHTBL StHASH = HASH_CASECARE
 		//数値を保存してるファイルから読み込む
 		INIFILE="C:\1\2-3.INI"
@@ -14,16 +14,26 @@
 
 
 		//変数の初期値の宣言
-		map = 0				//mapSLCTの初期値
-		ct = 0				//count-周回回数の初期値　Reptcount()に代入してる
-		mapSLCTresult = 0	//mapSLCT関数の戻り値の初期値
-		supplycount = 0		//補給回数の初期値　補給を繰り返さないようにするため
-		stHASH["gomap"] = 0	//出撃回数の初期値 0→繰り返す 1→1回だけ出撃する
+		map = 0							//mapSLCTの初期値
+		ct = 0							//count-周回回数の初期値　Reptcount()に代入してる
+		mapSLCTresult = 0				//mapSLCT関数の戻り値の初期値
+		supplycount = 0					//補給回数の初期値　補給を繰り返さないようにするため
+		stHASH["gomap"] = 0				//出撃回数の初期値 0→繰り返す 1→1回だけ出撃する
+		stHASH["expedition34"] = "OFF"	//艦隊３，４のみ遠征させる場合（初期値はOFF）
+		stHASH["expedition夜"] = "OFF"	//夜のみ遠征させる場合（初期値はOFF）
 
-		stHASH["expedition34"] = "OFF"
 		WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
+		WRITEINI("count","ini-expedition夜",stHASH["expedition夜"],INIFILE)
+		
 		stHASH["編成した"] = 0
 		WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
+		ID = GETID("提督業も忙しい！X") // マウスカーソル下のウィンドウ
+		x1 = STATUS(ID, ST_X) // X座標を取得
+		y1 = STATUS(ID, ST_Y) // Y座標を取得
+		x2 = STATUS(ID, ST_WIDTH) - x1 // 幅を取得し右下X座標を求める
+		y2 = STATUS(ID, ST_HEIGHT) - y1 +160// 幅を取得し右下Y座標を求める
+
+		
 
 		//ループ前の処理
 
@@ -40,7 +50,11 @@
 				WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
 				msgbox("遠征34のみに設定します")
 			endif
-
+			ifb GETKEYSTATE(VK_a)
+				stHASH["expedition夜"] = "ON"
+				WRITEINI("count","ini-expedition夜",stHASH["expedition夜"],INIFILE)
+				msgbox("遠征夜に設定します")
+			endif
 			//戦闘中に再起動した場合、以前の設定を読み込む
 			stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)//出撃状態
 			ifb stHASH["sortie"]="戦闘"
@@ -67,7 +81,7 @@
 //繰り返す処理をこの後に記入
 WHILE !GETKEYSTATE(VK_ESC)
 	//母港に戻る度取得するデータ
-		//出撃状態
+		//状態（"戦闘"、"母港"）
 		stHASH["sortie"] = READINI("count","ini-sortie",INIFILE)
 		//遠征状態
 		stHASH["expedition"] = READINI("count","ini-expedition",INIFILE)
@@ -103,6 +117,11 @@ WHILE !GETKEYSTATE(VK_ESC)
 			WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
 			msgbox("遠征34のみに設定します")
 		endif
+		ifb GETKEYSTATE(VK_a)
+			stHASH["expedition夜"] = "ON"
+			WRITEINI("count","ini-expedition夜",stHASH["expedition夜"],INIFILE)
+			msgbox("遠征夜に設定します")
+		endif
 
 
 	//羅針盤
@@ -121,10 +140,18 @@ WHILE !GETKEYSTATE(VK_ESC)
 				formation = 5
 			elseif chkimg("map4-3.bmp") and chkimg("cell-7.bmp")
 				formation = 5
+			elseif chkimg("map4-4.bmp") and chkimg("cell-4.bmp")
+				formation = 5
 			elseif chkimg("map1-5.bmp")
 				formation = 5
 			elseif chkimg("map5-4.bmp") and chkimg("BossB.bmp")
 				formation = 4
+			elseif chkimg("map33-1.bmp") and (chkimg("cell-2.bmp") or chkimg("BossB.bmp"))
+				formation = 5
+			elseif chkimg("map33-2.bmp") and chkimg("cell-1.bmp")
+				formation = 5
+			elseif chkimg("map33-2.bmp") and chkimg("cell-9.bmp")
+				formation = 3	
 			else 
 				formation = 1
 			endif
@@ -133,10 +160,19 @@ WHILE !GETKEYSTATE(VK_ESC)
 			sleep(0.1)
 			print formation
 			Sortieformation(formation)
-			
+
+		elseif chkimg("33-1セリフ.bmp") or chkimg("33-2セリフ.bmp")
+		rr()
+
+
+		elseif chkimg("能動分岐.bmp")
+			ifb chkimg("map33-2.bmp") and chkimg("cell-5.bmp")
+				BTN(LEFT,CLICK,1481,157,10)
+				BTN(LEFT,CLICK,1481,157,10)
+			endif
 textblock	
 
-		
+		elseif
 			elseif chkimg("map32-5.bmp") and chkimg("cell-1.bmp")
 			call 32-5_cell-1_能動分岐1.UWS
 		elseif chkimg("map32-4.bmp") and chkimg("cell-16.bmp")
@@ -160,7 +196,9 @@ endtextblock
 				or (chkimg("map5-2.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map2-5.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map4-2.bmp") and chkimg("BossB.bmp") and !chkimg("win.bmp"))_
-				or (chkimg("map4-4.bmp") and chkimg("BossB.bmp"))
+				or (chkimg("map4-4.bmp") and chkimg("BossB.bmp"))_
+				or (chkimg("map33-1.bmp") and chkimg("BossB.bmp"))_
+				or (chkimg("map33-2.bmp") and chkimg("BossB.bmp"))
 
 				sleep(1)		
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
@@ -189,7 +227,7 @@ endtextblock
 			RR()		
 		elseif chkimg("帰.bmp")
 			RR()
-		elseif chkimg("退.bmp")
+		elseif chkimg("退.bmp") or chkimg("撤退2.bmp")
 			RR()
 		
 	textblock
@@ -243,6 +281,8 @@ endtextblock
 			//遠征開始の処理
 			ifb stHASH["expedition34"] = "ON"
 				CALL "遠征マクロ_34.UWS"
+			elseif stHASH["expedition夜"] = "ON"
+				call "遠征マクロ3夜"
 			else
 				CALL "遠征マクロ3.UWS"
 			endif
@@ -256,7 +296,9 @@ endtextblock
 
 		
 			//大破入渠
-			ifb stHASH["dock"] = "大破" and chkimg("ドッグ未使用.bmp")
+			ifb (stHASH["dock"] = "大破" and chkimg("ドッグ未使用.bmp"))_
+				or((stHASH["expedition夜"] = "ON") and chkimg("ドッグ未使用.bmp"))
+			
 				fukidasi("大破入渠",1800,0)
 				fukidasi("1",1500,0)
 				dock(stHASH)
@@ -307,6 +349,7 @@ endtextblock
 				MAX()
 			elseif chkimg("home.bmp")
 			fukidasi("5",1500,0)
+
 			//出撃
 				fukidasi("出撃",1800,0)
 				ifb stHASH["Rept"] = 1 and stHASH["gomap"] = 1 or stHASH["MapNo"] = 1
@@ -360,9 +403,9 @@ sleep(random(10/10))
 
 
 
-
-
-
+ifb (stHASH["expedition夜"] = "ON")
+sleep(900)
+endif
 wend
 
 //☆サブ処理 THREAD State()で呼び出される
@@ -387,6 +430,8 @@ PROCEDURE State()
 		stHASH["1艦目cnd"] = READINI("count","ini-1艦目cnd",INIFILE)//cnd
 		stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 		stHASH["expedition34"] = READINI("count","ini-expedition34",INIFILE)//cnd
+		stHASH["expedition夜"] = READINI("count","ini-expedition夜",INIFILE)//cnd
+
 //出撃中判定
 
 		ifb chkimg("第一艦隊出撃中.bmp",0)
@@ -407,7 +452,7 @@ PROCEDURE State()
 	//	WRITEINI("count","ini-map",stHASH["map"],INIFILE)
 //マップ判定
 //遠征判定
-		ifb stHASH["expedition34"] = "ON"
+		ifb (stHASH["expedition34"] = "ON") or (stHASH["expedition夜"] = "ON")
 			ifb chkimg("帰還1.bmp") or chkimg("帰還2.bmp") or chkimg("帰還3.bmp")
 				stHASH["expedition"] = "遠征帰還"
 				
