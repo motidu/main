@@ -1,4 +1,5 @@
 //☆メイン処理
+OPTION SHORTCIRCUIT
 
 	//処理を書く前に書いておくこと
 		//別ファイルの関数ファイルを取得
@@ -15,10 +16,9 @@
 
 		//変数の初期値の宣言
 		map = 0							//mapSLCTの初期値
-		ct = 0							//count-周回回数の初期値　Reptcount()に代入してる
 		mapSLCTresult = 0				//mapSLCT関数の戻り値の初期値
 		supplycount = 0					//補給回数の初期値　補給を繰り返さないようにするため
-		stHASH["gomap"] = 0				//出撃回数の初期値 0→繰り返す 1→1回だけ出撃する
+		stHASH["gomap"] = 0				//戦闘中に再起動した場合；出撃回数の初期値 0→繰り返す 1→1回だけ出撃する
 		stHASH["expedition34"] = "OFF"	//艦隊３，４のみ遠征させる場合（初期値はOFF）
 		stHASH["expedition夜"] = "OFF"	//夜のみ遠征させる場合（初期値はOFF）
 
@@ -35,21 +35,20 @@
 
 		
 
-		//ループ前の処理
-
-			//1週のみに変更
+		//ループ前の処理；戦闘中に再起動した場合の継続処理
+			//回数；1週のみに変更
 			ifb GETKEYSTATE(VK_r)
 				stHASH["gomap"] = 1
 				WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
 				msgbox("1週のみにします")
 			endif
-
-			//
+			//遠征；34のみに変更
 			ifb GETKEYSTATE(VK_s)
 				stHASH["expedition34"] = "ON"
 				WRITEINI("count","ini-expedition34",stHASH["expedition34"],INIFILE)
 				msgbox("遠征34のみに設定します")
 			endif
+			//遠征；特定時間のみに変更
 			ifb GETKEYSTATE(VK_a)
 				stHASH["expedition夜"] = "ON"
 				WRITEINI("count","ini-expedition夜",stHASH["expedition夜"],INIFILE)
@@ -72,7 +71,7 @@
 					WRITEINI("count","ini-MapNo",stHASH["MapNo"],INIFILE)
 				endif
 			//周回回数
-					stHASH["Rept"] = Reptcount(ct)
+					stHASH["Rept"] = Reptcount()
 					WRITEINI("count","ini-Rept",stHASH["Rept"],INIFILE)
 			endif
 
@@ -96,11 +95,18 @@ WHILE !GETKEYSTATE(VK_ESC)
 		//1,2艦目の体力（入渠、大破、中破、小破以上）
 		stHASH["1艦目"] = READINI("count","ini-1艦目",INIFILE)
 		stHASH["2艦目"] = READINI("count","ini-2艦目",INIFILE)
+		stHASH["3艦目"] = READINI("count","ini-3艦目",INIFILE)
+		stHASH["4艦目"] = READINI("count","ini-4艦目",INIFILE)
+		stHASH["5艦目"] = READINI("count","ini-5艦目",INIFILE)
+		stHASH["6艦目"] = READINI("count","ini-6艦目",INIFILE)
+
 		//1,2艦目のコンディション（キラキラ、白、赤）
 		stHASH["1艦目cnd"] = READINI("count","ini-1艦目cnd",INIFILE)
 		stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)
 		//帰港後編成したかどうか　編成で1、出撃した後0にもどる
 		stHASH["編成した"] = READINI("count","ini-編成した",INIFILE)
+
+		stHASH["入渠"] = READINI("count","ini-入渠",INIFILE)//
 
 	ifb stHASH["sortie"]="戦闘"
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
@@ -132,26 +138,30 @@ WHILE !GETKEYSTATE(VK_ESC)
 				RR()
 			endif
 	//陣形
-		elseif chkimg("陣形選択.bmp")
+		elseif chkimg("陣形選択.bmp") and !chkimg("能動分岐.bmp")
+		print "陣形選択"
+		ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+		,1119,-35,800,900,0)
 			formation = 0
-			ifb chkimg("map4-3.bmp") and chkimg("cell-14.bmp")
+			
+			ifb chkimg("map1-5.bmp")
 				formation = 5
-			elseif chkimg("map4-3.bmp") and chkimg("cell-16.bmp")
+			elseif chkimg("map1-6.bmp") and chkimg("cell-3.bmp")
 				formation = 5
-			elseif chkimg("map4-3.bmp") and chkimg("cell-7.bmp")
+			elseif chkimg("map1-6.bmp") and chkimg("cell-12.bmp")
+				formation = 3
+			elseif chkimg("map4-3.bmp") and (chkimg("cell-14.bmp") or chkimg("cell-16.bmp") or chkimg("cell-7.bmp"))
 				formation = 5
 			elseif chkimg("map4-4.bmp") and chkimg("cell-4.bmp")
 				formation = 5
-			elseif chkimg("map1-5.bmp")
+			elseif chkimg("map4-5.bmp") and chkimg("cell-6.bmp")
 				formation = 5
+			elseif chkimg("map4-5.bmp") and chkimg("cell-14.bmp")
+				formation = 1								
 			elseif chkimg("map5-4.bmp") and chkimg("BossB.bmp")
 				formation = 4
 			elseif chkimg("map33-1.bmp") and (chkimg("cell-2.bmp") or chkimg("BossB.bmp"))
 				formation = 5
-			elseif chkimg("map33-2.bmp") and chkimg("cell-1.bmp")
-				formation = 5
-			elseif chkimg("map33-2.bmp") and chkimg("cell-9.bmp")
-				formation = 3	
 			else 
 				formation = 1
 			endif
@@ -166,9 +176,16 @@ WHILE !GETKEYSTATE(VK_ESC)
 
 
 		elseif chkimg("能動分岐.bmp")
-			ifb chkimg("map33-2.bmp") and chkimg("cell-5.bmp")
-				BTN(LEFT,CLICK,1481,157,10)
-				BTN(LEFT,CLICK,1481,157,10)
+		print "能動分岐"
+			ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
+		,1119,-35,800,900,0)
+			ifb chkimg("map33-2.bmp") and chkimg("cell-5.bmp")			
+								print "能動分岐２"								
+				BTN(LEFT,CLICK,1470 + random(10),120 + random(10),10)
+				BTN(LEFT,CLICK,1470 + random(10),120 + random(10),10)
+			elseif chkimg("map4-5.bmp") and chkimg("能動分岐.bmp")
+				BTN(LEFT,CLICK,1597,209)
+				BTN(LEFT,CLICK,1597,209)
 			endif
 textblock	
 
@@ -190,13 +207,16 @@ textblock
 endtextblock
 //離脱判定
 		elseif chkimg("離脱判定.bmp") or chkimg("離脱判定2.bmp") or chkimg("離脱判定3.bmp")
+		print "離脱判定"
 			ifb (chkimg("map32-4.bmp") and chkimg("BossB.bmp"))_
+				or (chkimg("map3-5.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map32-5.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map32-5.bmp") and chkimg("cell-8.bmp"))_
 				or (chkimg("map5-2.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map2-5.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map4-2.bmp") and chkimg("BossB.bmp") and !chkimg("win.bmp"))_
 				or (chkimg("map4-4.bmp") and chkimg("BossB.bmp"))_
+				or (chkimg("map4-5.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map33-1.bmp") and chkimg("BossB.bmp"))_
 				or (chkimg("map33-2.bmp") and chkimg("BossB.bmp"))
 
@@ -215,20 +235,20 @@ endtextblock
 		elseif chkimg("獲得画面.bmp") or chkimg("friendfleetarea.bmp") or chkimg("獲得画面2.bmp")_
 				 or chkimg("獲得画面3.bmp") or chkimg("獲得画面4.bmp")_
 				 or chkimg("獲得画面5.bmp") or chkimg("獲得画面6.bmp")
+		print "獲得画面"
 			RR()
 		elseif chkimg("進撃選択.bmp")
+		print "進撃選択"
 			ifb (chkimg("map4-3.bmp") and chkimg("cell-16.bmp"))_
 				or (chkimg("map4-3.bmp") and chkimg("cell-7.bmp"))
 					kbd(vk_back,click)
 			else
 				RR()
 			endif
-		elseif chkimg("次.bmp")
+		elseif chkimg("次.bmp") or chkimg("帰.bmp") or chkimg("帰2.bmp") or chkimg("退.bmp") or chkimg("撤退2.bmp")
+		print "次画面へ"
 			RR()		
-		elseif chkimg("帰.bmp")
-			RR()
-		elseif chkimg("退.bmp") or chkimg("撤退2.bmp")
-			RR()
+
 		
 	textblock
 	//戦闘中の処理　関数　戦闘
@@ -252,7 +272,8 @@ endtextblock
 	//	RR()
 		
 		elseif chkimg("大破B.bmp",0)
-			ifb chkimg("map5-4.bmp") and chkimg("cell-10.bmp")
+			ifb (chkimg("map5-4.bmp") and chkimg("cell-10.bmp"))_
+				or (chkimg("map1-6.bmp") and chkimg("cell-13.bmp"))
 				Sortiebreak2()
 			else
 				Sortiebreak()
@@ -269,15 +290,17 @@ endtextblock
 
 	
 	elseif stHASH["sortie"]="母港"
+	print "母港"
 	//母港の処理------------------------------------------------------------------------
 	ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 	,1119,3,800,893,0)
 		//遠征
 		ifb stHASH["expedition"] = "遠征帰還"
+print "遠征帰還"
 			//遠征帰還の処理
 			call "遠征帰還.uws"
 		elseif stHASH["expedition"] = "無遠征状態"
-
+print "無遠征状態"
 			//遠征開始の処理
 			ifb stHASH["expedition34"] = "ON"
 				CALL "遠征マクロ_34.UWS"
@@ -289,20 +312,22 @@ endtextblock
 		
 		//遠征
 
-		
+print "遠征end"		
 		//母港諸操作
 		else//------------------------------------------------------------
 					fukidasi("+ supplycount +"+ supplycount +,1500,0)
 
-		
+print "母港諸操作"			
 			//大破入渠
 			ifb (stHASH["dock"] = "大破" and chkimg("ドッグ未使用.bmp"))_
-				or((stHASH["expedition夜"] = "ON") and chkimg("ドッグ未使用.bmp"))
-			
+				or ((stHASH["expedition夜"] = "ON") and chkimg("ドッグ未使用.bmp"))_
+				or (chkimg("ドッグ未使用.bmp") and (stHASH["入渠"] = "中破以降") and _
+				((stHASH["MapNo"] = 15) or (stHASH["MapNo"] = 25) or (stHASH["MapNo"] = 35) or (stHASH["MapNo"] = 45))) _
+				or (chkimg("ドッグ未使用.bmp") and (stHASH["MapNo"] > 300) and (stHASH["入渠"] = "中破以降"))
+print "大破入渠"
 				fukidasi("大破入渠",1800,0)
 				fukidasi("1",1500,0)
 				dock(stHASH)
-				
 			//オリョクル変更
 			elseif (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["1艦目"] = "大破")_
 			 or (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["2艦目"] = "大破")_
@@ -311,7 +336,7 @@ endtextblock
 			 or (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["1艦目"] = "中破")_
 			 or (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["2艦目"] = "中破")
 			 fukidasi("2",1500,0)
-
+print "オリョクル変更"
 				change23()
 				stHASH["編成した"] = 1
 				WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
@@ -319,61 +344,65 @@ endtextblock
 		
 			//補給
 			elseif stHASH["supply"] = "off"
+print "補給"
 			fukidasi("3",1500,0)
 			fukidasi("補給",1800,0)
 				ifb supplycount > 3
+print "補給1"
 					fukidasi(" supplycount : "+ supplycount +,1800,0)
 					ifb stHASH["MapNo"]=23 
+print "補給2"
 						change23()
+print "補給3"						
 						stHASH["編成した"] = 1
 						WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
 						BHP()
 						supplycount = 0						
 					else
+print "補給4"
 						for i = 1 to 30
 							sleep(1)
 							fukidasi("count"+ i +,1800,0)
 						next
+						BHP()
 					endif
 				else
+print "補給5"
 					Supplyone()
+print "補給6"
 					supplycount = supplycount + 1
 				endif
 
-
 			//解体
 			elseif stHASH["MAX"] = "MAX"
+print "解体"
 			fukidasi("4",1500,0)
 			fukidasi("解体",1800,0)
-
 				MAX()
 			elseif chkimg("home.bmp")
 			fukidasi("5",1500,0)
+			
 
 			//出撃
+print "出撃" + stHASH["MapNo"]
 				fukidasi("出撃",1800,0)
 				ifb stHASH["Rept"] = 1 and stHASH["gomap"] = 1 or stHASH["MapNo"] = 1
 					sleep(30)
 					CONTINUE 1
 				else
-					GoSortie(stHASH)
+					Go = 0
+					Go = GoSortie(stHASH)
 					stHASH["gomap"] = 1
 					WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
 					stHASH["編成した"] = 1
 					WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
 				endif
+			elseif Go = 0
+			BHP()
 			endif
-			
 			sleep(1)
-
-			
 		endif
-			sleep(1)
-		
-
-
-
-		
+		sleep(1)
 	endif
 	ifb stHASH["MapNo"] = 43
 	sleep(1)
@@ -427,11 +456,15 @@ PROCEDURE State()
 		stHASH["MAX"] = READINI("count","ini-MAX",INIFILE)//補給状態
 		stHASH["1艦目"] = READINI("count","ini-1艦目",INIFILE)//HP状態
 		stHASH["2艦目"] = READINI("count","ini-2艦目",INIFILE)//HP状態
+		stHASH["3艦目"] = READINI("count","ini-3艦目",INIFILE)//HP状態
+		stHASH["4艦目"] = READINI("count","ini-4艦目",INIFILE)//HP状態
+		stHASH["5艦目"] = READINI("count","ini-5艦目",INIFILE)//HP状態
+		stHASH["6艦目"] = READINI("count","ini-6艦目",INIFILE)//HP状態
 		stHASH["1艦目cnd"] = READINI("count","ini-1艦目cnd",INIFILE)//cnd
 		stHASH["2艦目cnd"] = READINI("count","ini-2艦目cnd",INIFILE)//cnd
 		stHASH["expedition34"] = READINI("count","ini-expedition34",INIFILE)//cnd
 		stHASH["expedition夜"] = READINI("count","ini-expedition夜",INIFILE)//cnd
-
+		stHASH["入渠"] = READINI("count","ini-入渠",INIFILE)//cnd
 //出撃中判定
 
 		ifb chkimg("第一艦隊出撃中.bmp",0)
@@ -569,6 +602,7 @@ PROCEDURE State()
 	WRITEINI("count","ini-MAX",stHASH["MAX"],INIFILE)
 
 	//HP
+	
 	ifb chkimg("大破_.bmp",0,1239,625,1507,670)
 	stHASH["1艦目"] = "大破"
 	elseif chkimg("中破.bmp",0,1239,625,1507,670)
@@ -592,6 +626,71 @@ PROCEDURE State()
 	stHASH["2艦目"] = "小破以上"	
 	endif
 	WRITEINI("count","ini-2艦目",stHASH["2艦目"],INIFILE)
+		
+	ifb chkimg("_　_.bmp",0,1239,710,1504,750)
+	stHASH["3艦目"] = "なし"
+	elseif chkimg("大破_.bmp",0,1239,710,1504,750)
+	stHASH["3艦目"] = "大破"
+	elseif chkimg("中破.bmp",0,1239,710,1504,750)
+	stHASH["3艦目"] = "中破"
+	elseif chkimg("入渠中1.bmp",0,1239,710,1504,750)
+	stHASH["3艦目"] = "入渠中"
+	else
+	stHASH["3艦目"] = "小破以上"	
+	endif
+	WRITEINI("count","ini-3艦目",stHASH["3艦目"],INIFILE)
+		
+	ifb chkimg("_　_.bmp",0,1239,750,1504,790)
+	stHASH["4艦目"] = "なし"
+	elseif chkimg("大破_.bmp",0,1239,750,1504,790)
+	stHASH["4艦目"] = "大破"
+	elseif chkimg("中破.bmp",0,1239,750,1504,790)
+	stHASH["4艦目"] = "中破"
+	elseif chkimg("入渠中1.bmp",0,1239,750,1504,790)
+	stHASH["4艦目"] = "入渠中"
+	else
+	stHASH["4艦目"] = "小破以上"	
+	endif
+	WRITEINI("count","ini-4艦目",stHASH["4艦目"],INIFILE)
+		
+	ifb chkimg("_　_.bmp",0,1239,750,1504,830)
+	stHASH["5艦目"] = "なし"
+	elseif chkimg("大破_.bmp",0,1239,750,1504,830)
+	stHASH["5艦目"] = "大破"
+	elseif chkimg("中破.bmp",0,1239,750,1504,830)
+	stHASH["5艦目"] = "中破"
+	elseif chkimg("入渠中1.bmp",0,1239,750,1504,830)
+	stHASH["5艦目"] = "入渠中"
+	else
+	stHASH["5艦目"] = "小破以上"	
+	endif
+	WRITEINI("count","ini-5艦目",stHASH["5艦目"],INIFILE)
+		
+	ifb chkimg("_　_.bmp",0,1239,830,1504,870)
+	stHASH["6艦目"] = "なし"
+	elseif chkimg("大破_.bmp",0,1239,830,1504,870)
+	stHASH["6艦目"] = "大破"
+	elseif chkimg("中破.bmp",0,1239,830,1504,870)
+	stHASH["6艦目"] = "中破"
+	elseif chkimg("入渠中1.bmp",0,1239,830,1504,870)
+	stHASH["6艦目"] = "入渠中"
+	else
+	stHASH["6艦目"] = "小破以上"	
+	endif
+	WRITEINI("count","ini-6艦目",stHASH["6艦目"],INIFILE)
+
+ifb (stHASH["1艦目"] = "大破" or stHASH["1艦目"] = "中破" or _
+	stHASH["2艦目"] = "大破" or stHASH["2艦目"] = "中破" or _
+	stHASH["3艦目"] = "大破" or stHASH["3艦目"] = "中破" or _
+	stHASH["4艦目"] = "大破" or stHASH["4艦目"] = "中破" or _
+	stHASH["5艦目"] = "大破" or stHASH["5艦目"] = "中破" or _
+	stHASH["6艦目"] = "大破" or stHASH["6艦目"] = "中破")
+	
+	stHASH["入渠"] = "中破以降"
+	else
+	stHASH["入渠"] = "小破以上"
+endif
+WRITEINI("count","ini-入渠",stHASH["入渠"],INIFILE)	
 	
 //艦隊判定
 

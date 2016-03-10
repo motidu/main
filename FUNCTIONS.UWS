@@ -1,4 +1,5 @@
 //FUNCTIONS.UWS 関数はこちらに記録されています
+OPTION SHORTCIRCUIT
 
 textblock
 コピペ用＆備忘録としてtextblock内に書いています
@@ -22,7 +23,7 @@ FEND
 endtextblock
 
 
-FUNCTION 画像クリック(gazou_name,gazou_name2,Detail1="",Detail2="",retry=999,verify_flg=True)
+FUNCTION 画像クリック(gazou_name,gazou_name2,Detail1="",Detail2="",retry=99,verify_flg=True)
 	RESULT = False
 	For i = 0 To retry
 		Ifb CHKIMG(gazou_name + ".bmp",0)
@@ -45,7 +46,8 @@ FUNCTION 画像クリック(gazou_name,gazou_name2,Detail1="",Detail2="",retry=999,ver
 	Next
 FEND
 
-FUNCTION クリック(gazou_name,gazou_name2,Detail1="",Detail2="",retry=999,verify_flg=True)
+
+FUNCTION クリック(gazou_name,gazou_name2,Detail1="",Detail2="",retry=99,verify_flg=True)
 	RESULT = False
 	For i = 0 To retry
 		Ifb CHKIMG(gazou_name + ".bmp",0)
@@ -63,7 +65,7 @@ FUNCTION クリック(gazou_name,gazou_name2,Detail1="",Detail2="",retry=999,verify_
 					Break
 		ELSE
 			SLEEP(0.3)
-			Print "待ちます(" + i + "/" + retry + ")"
+			Print "待ちます" + gazou_name2 + "(" + i + "/" + retry + ")"
 		Endif
 	Next
 FEND
@@ -217,13 +219,24 @@ FEND
 
 	//補給1-------------------------------
 	PROCEDURE Supplyone()
+	Supplyone2 = 0
+print "Supplyone1"
 		FUKIDASI("補給",1120,0)
 		ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 			,1119,3,800,893,0)
 		KBD(VK_o,CLICK,100)
+print "Supplyone2"
 		while chkimg("出撃T.bmp",0)=false
+			Supplyone2 = Supplyone2 + 1
+print + Supplyone2
+			ifb Supplyone2 > 10
+				EXIT
+			endif
+print "Supplyone3"
 			sleep(0.5)
+			
 		wend
+print "Supplyone4"
 		fukidasi("補給しました",1120,0)
 		sleep(5)
 	fend
@@ -252,9 +265,17 @@ FUKIDASI("修理",1800,0)
 			,1119,3,800,893,0)
 	ifb chkimg("出撃T.bmp",0)
 		ifb chkimg("入渠未使用.bmp",0)
-			ifb stHASH["MapNo"] = 43 or stHASH["MapNo"] = 15
+			ifb stHASH["MapNo"] = 43
+				print "バケツ"
 				call "大破入渠バケツ.UWS"
+			elseif stHASH["MapNo"] > 300_
+				 or (stHASH["MapNo"] = 15) or (stHASH["MapNo"] = 16)_
+				 or (stHASH["MapNo"] = 25) or (stHASH["MapNo"] = 35)_
+				 or (stHASH["MapNo"] = 45)
+			print "300"
+				call "大破入渠バケツmap300.UWS"
 			else
+				print "nasi"
  				call "大破入渠new.uws"
  			endif
 		endif
@@ -278,7 +299,7 @@ fend
 FUNCTION MapNo(map)
 	map = SLCTBOX(SLCT_BTN,0,1669,286,"マップを選んでください",_
 	"1-1","オリョクル","1-5","カレクル","4-3",_
-	"5-4","E-5","その他","遠征繰り返し")
+	"5-4","E-2","その他","遠征繰り返し")
 
 	SELECT map
 	CASE SLCT_1
@@ -294,7 +315,7 @@ FUNCTION MapNo(map)
 	CASE SLCT_6
 	a = 54
 	CASE SLCT_7
-	a = 305
+	a = 302
 	CASE SLCT_8
 	a = 0
 	CASE SLCT_9
@@ -348,7 +369,7 @@ FUNCTION mapSLCT(mapSLCTresult)
 fend
 //出撃回数-------------------------------
 
-FUNCTION Reptcount(ct)
+FUNCTION Reptcount(ct=0)
 	Rept = SLCTBOX(SLCT_BTN,0,1669,286,"何回繰り返しますか？","1","無限")
 
 	SELECT Rept
@@ -398,7 +419,7 @@ fend
 
 
 //2-3
-PROCEDURE GoSortie(stHASH[])
+FUNCTION GoSortie(stHASH[])
  while chkimg("第一艦隊出撃可能.bmp",0)
 			ifb chkimg("home.bmp") and chkimg("出撃選択.bmp")=false
 				call "出撃前.uws"
@@ -409,12 +430,21 @@ PROCEDURE GoSortie(stHASH[])
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 				,1119,3,800,893,0)
 				fukidasi("y",1800,0)
-				KBD(vk_y,CLICK,0)//キーボード return				
+				KBD(vk_y,CLICK,0)//キーボード return
+				
 			elseif chkimg("海域選択.bmp")
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
-				,1119,3,800,893,0)				
-				SELECT stHASH["MapNo"]
+				,1119,3,800,893,0)
 				
+				ifb stHASH["MapNo"]>300
+					ifb !(chkimg("33-2乙HP.bmp") or chkimg("33-2乙HP2.bmp") or chkimg("33-2乙HP3.bmp") or chkimg("33-2甲.bmp"))
+						call "イベントHP回復.UWS"
+						print "break"
+						break
+					endif
+				endif
+								
+				SELECT stHASH["MapNo"]								
 					CASE 11,12,13,14,15,16
 						ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 						,1119,3,800,893,0)
@@ -483,7 +513,7 @@ PROCEDURE GoSortie(stHASH[])
 				endif
 			endtextblock	
 			elseif chkimg("決定.bmp")
-			HP確認(stHASH)	
+			
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 				,1119,3,800,893,0)
 				fukidasi("return",1800,0)
@@ -491,12 +521,12 @@ PROCEDURE GoSortie(stHASH[])
 			elseif chkimg("出撃開始.bmp")
 			HP確認(stHASH)
 				ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
-				,1119,3,800,893,0)				
+		,1119,-35,800,900,0)				
 				fukidasi("ctrl_ent",1800,0)				
 						kbd(vk_ctrl,down,100)
 						kbd(vk_return,click)
 						kbd(vk_ctrl,up,10)
-				
+				result = 1
 			endif
 wend
 				fukidasi("出撃しました",1800,0)
@@ -547,8 +577,10 @@ fend
 
 PROCEDURE HP確認(stHASH[])
 ifb stHASH["MapNo"] > 300
-	ifb !chkimg("33-2乙HP.bmp")
+print "HP確認"
+	ifb !(chkimg("33-2乙HP.bmp") or chkimg("33-2乙HP2.bmp") or chkimg("33-2乙HP3.bmp") or chkimg("33-2甲.bmp"))
 		msgbox("HP確認してください")
+			EXIT
 		endif
 endif
 fend
