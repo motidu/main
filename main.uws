@@ -290,17 +290,18 @@ endtextblock
 
 	
 	elseif stHASH["sortie"]="母港"
-	print "母港"
+	Go = 0
+	print "母港/Go:" + GO
 	//母港の処理------------------------------------------------------------------------
 	ACW(GETID("提督業も忙しい！X","HwndWrapper[KanColleViewer.exe")_
 	,1119,3,800,893,0)
 		//遠征
 		ifb stHASH["expedition"] = "遠征帰還"
-print "遠征帰還"
+		print "遠征帰還"
 			//遠征帰還の処理
 			call "遠征帰還.uws"
 		elseif stHASH["expedition"] = "無遠征状態"
-print "無遠征状態"
+		print "無遠征状態"
 			//遠征開始の処理
 			ifb stHASH["expedition34"] = "ON"
 				CALL "遠征マクロ_34.UWS"
@@ -312,19 +313,18 @@ print "無遠征状態"
 		
 		//遠征
 
-print "遠征end"		
+		print "遠征end"		
 		//母港諸操作
 		else//------------------------------------------------------------
 					fukidasi("+ supplycount +"+ supplycount +,1500,0)
-
-print "母港諸操作"			
+			print "母港諸操作"			
 			//大破入渠
 			ifb (stHASH["dock"] = "大破" and chkimg("ドッグ未使用.bmp"))_
 				or ((stHASH["expedition夜"] = "ON") and chkimg("ドッグ未使用.bmp"))_
 				or (chkimg("ドッグ未使用.bmp") and (stHASH["入渠"] = "中破以降") and _
 				((stHASH["MapNo"] = 15) or (stHASH["MapNo"] = 25) or (stHASH["MapNo"] = 35) or (stHASH["MapNo"] = 45))) _
 				or (chkimg("ドッグ未使用.bmp") and (stHASH["MapNo"] > 300) and (stHASH["入渠"] = "中破以降"))
-print "大破入渠"
+			print "大破入渠"
 				fukidasi("大破入渠",1800,0)
 				fukidasi("1",1500,0)
 				dock(stHASH)
@@ -336,7 +336,7 @@ print "大破入渠"
 			 or (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["1艦目"] = "中破")_
 			 or (stHASH["MapNo"]=23 and stHASH["編成した"] = 0 and stHASH["2艦目"] = "中破")
 			 fukidasi("2",1500,0)
-print "オリョクル変更"
+				print "オリョクル変更"
 				change23()
 				stHASH["編成した"] = 1
 				WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
@@ -344,22 +344,22 @@ print "オリョクル変更"
 		
 			//補給
 			elseif stHASH["supply"] = "off"
-print "補給"
+			print "補給"
 			fukidasi("3",1500,0)
 			fukidasi("補給",1800,0)
 				ifb supplycount > 3
-print "補給1"
+				print "補給1"
 					fukidasi(" supplycount : "+ supplycount +,1800,0)
 					ifb stHASH["MapNo"]=23 
-print "補給2"
+					print "補給2"
 						change23()
-print "補給3"						
+					print "補給3"						
 						stHASH["編成した"] = 1
 						WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
 						BHP()
 						supplycount = 0						
 					else
-print "補給4"
+					print "補給4"
 						for i = 1 to 30
 							sleep(1)
 							fukidasi("count"+ i +,1800,0)
@@ -367,15 +367,15 @@ print "補給4"
 						BHP()
 					endif
 				else
-print "補給5"
+			print "補給5"
 					Supplyone()
-print "補給6"
+			print "補給6"
 					supplycount = supplycount + 1
 				endif
 
 			//解体
 			elseif stHASH["MAX"] = "MAX"
-print "解体"
+			print "解体"
 			fukidasi("4",1500,0)
 			fukidasi("解体",1800,0)
 				MAX()
@@ -384,20 +384,25 @@ print "解体"
 			
 
 			//出撃
-print "出撃" + stHASH["MapNo"]
+			print "出撃" + stHASH["MapNo"]
 				fukidasi("出撃",1800,0)
 				ifb stHASH["Rept"] = 1 and stHASH["gomap"] = 1 or stHASH["MapNo"] = 1
 					sleep(30)
 					CONTINUE 1
 				else
 					Go = 0
-					Go = GoSortie(stHASH)
+					Go = GoSortie(stHASH)					
+					stHASH["sortie"] = "戦闘"
+					WRITEINI("count","ini-sortie",stHASH["sortie"],INIFILE)
+					print "Go:" + Go + ":" + stHASH["sortie"]
 					stHASH["gomap"] = 1
 					WRITEINI("count","ini-gomap",stHASH["gomap"],INIFILE)
 					stHASH["編成した"] = 1
 					WRITEINI("count","ini-編成した",stHASH["編成した"],INIFILE)
+
 				endif
 			elseif Go = 0
+			print "Go:" + GO + "/BHP"
 			BHP()
 			endif
 			sleep(1)
@@ -473,6 +478,7 @@ PROCEDURE State()
 		else
 			stHASH["sortie"] = "母港"
 		endif
+		print "stHASH//" + stHASH["sortie"]
 		WRITEINI("count","ini-sortie",stHASH["sortie"],INIFILE)
 
 //出撃中判定
